@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: "Roberts"
+    given-names: "Tom"
+    email: "tom.roberts@ucl.ac.uk"
+repository-code: "https://github.com/SAFEHR-data/pyonb"
+title: "pyonb: Python SDK for OnBase REST API"
+license: "MIT"
