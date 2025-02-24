@@ -4,6 +4,10 @@ description: Create a new issue or task for pyonb
 labels:
   - design
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Let's add a new task/issue to the project
   - type: textarea
     id: description
     attributes:
