@@ -1,5 +1,8 @@
 # pyonb
 
+> [!WARNING]  
+> This repo is under construction.
+
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Tests status][tests-badge]][tests-link]
 [![Linting status][linting-badge]][linting-link]
@@ -17,9 +20,6 @@
 <!-- prettier-ignore-end -->
 
 Python SDK for OnBase REST API
-
-> [!WARNING]  
-> This repo is under construction.
 
 This project is developed in collaboration with the
 [Centre for Advanced Research Computing](https://ucl.ac.uk/arc), University
