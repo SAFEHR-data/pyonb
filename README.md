@@ -18,6 +18,9 @@
 
 Python SDK for OnBase REST API
 
+> [!WARNING]  
+> This repo is under construction.
+
 This project is developed in collaboration with the
 [Centre for Advanced Research Computing](https://ucl.ac.uk/arc), University
 College London.
@@ -120,10 +123,9 @@ mkdocs serve
 
 ## Roadmap
 
-- [x] Initial Research
-- [ ] Minimum viable product <-- You are Here
-- [ ] Alpha Release
-- [ ] Feature-Complete Release
+- [x] Initial design with Mock data and database
+- [ ] Proof-of-Concept --- compatible with UCLH OnBase API 
+- [ ] Minimum Viable Product
 
 ## Acknowledgements
 
