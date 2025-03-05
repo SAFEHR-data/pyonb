@@ -21,43 +21,33 @@
 
 Python SDK for OnBase REST API
 
-This project is developed in collaboration with the
-[Centre for Advanced Research Computing](https://ucl.ac.uk/arc), University
-College London.
-
 ## About
 
 ### Project Team
 
-Tom Roberts ([tom.roberts@ucl.ac.uk](mailto:tom.roberts@ucl.ac.uk))
-
-<!-- TODO: how do we have an array of collaborators ? -->
-
-### Research Software Engineering Contact
-
-Centre for Advanced Research Computing, University College London
-([arc.collaborations@ucl.ac.uk](mailto:arc.collaborations@ucl.ac.uk))
-
-## Built With
-
-<!-- TODO: can cookiecutter make a list of frameworks? -->
-
-- [Framework 1](https://something.com)
-- [Framework 2](https://something.com)
-- [Framework 3](https://something.com)
+- Arman Eshaghi
+- Tom Roberts ([tom.roberts@ucl.ac.uk](mailto:tom.roberts@ucl.ac.uk))
+- Kawsar Noor
+- Lawrence Lai
 
 ## Getting Started
 
+<!--COMMENT OUT 
+
 ### Prerequisites
 
-<!-- Any tools or versions of languages needed to run code. For example specific Python or Node versions. Minimum hardware requirements also go here. -->
-
 `pyonb` requires Python 3.11&ndash;3.13.
+
+END COMMENT OUT-->
 
 ### Installation
 
 <!-- How to build or install the application. -->
 
+> [!NOTE]
+> In progress.
+
+<!--COMMENT OUT 
 We recommend installing in a project specific virtual environment created using
 a environment management tool such as
 [Conda](https://docs.conda.io/projects/conda/en/stable/). To install the latest
@@ -86,7 +76,11 @@ How to run the application on your local system.
 
 ### Running Tests
 
+END COMMENT OUT-->
+
 <!-- How to run tests on your local system. -->
+
+<!--COMMENT OUT 
 
 Tests can be run across all compatible Python versions in isolated environments
 using [`tox`](https://tox.wiki/en/latest/) by running
@@ -121,12 +115,12 @@ environment with the optional `docs` dependencies installed, run
 mkdocs serve
 ```
 
-## Roadmap
-
-- [x] Initial design with Mock data and database
-- [ ] Proof-of-Concept --- compatible with UCLH OnBase API 
-- [ ] Minimum Viable Product
+END COMMENT OUT-->
 
 ## Acknowledgements
 
 This work was funded by NIHR UCLH/UCL Biomedical Research Centre.
+
+This project is developed in collaboration with the
+[Centre for Advanced Research Computing](https://ucl.ac.uk/arc), University
+College London.
