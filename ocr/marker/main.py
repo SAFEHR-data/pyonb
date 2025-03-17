@@ -46,6 +46,7 @@ if __name__ == "__main__":
         print("Usage: python main.py <input_pdf_path> <output_txt_path>")
         sys.exit(1)
 
+    # TODO: more robust file pathing - Python and Docker
     input_pdf_path = sys.argv[1]
     output_txt_path = sys.argv[2]
 
