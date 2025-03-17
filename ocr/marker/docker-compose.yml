@@ -1,0 +1,10 @@
+networks:
+  pyonb:
+
+services:
+  marker:
+    build: .
+    volumes:
+      - ./input-data:/app/input-data
+      - ./output-data:/app/output-data
+    command: ["python", "main.py"]
