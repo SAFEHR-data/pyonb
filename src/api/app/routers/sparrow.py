@@ -1,7 +1,6 @@
 import json
 import os
 
-from os import walk
 from fastapi import APIRouter
 import datetime
 import logging
@@ -27,15 +26,15 @@ async def hello():
 
 @router.post("/sparrow-ocr/inference")
 async def inference():
-    image_in_path = os.environ.get("IMAGE_IN_PATH", "/images/in")
     logger.info("[POST] /sparrow-ocr/inference")
-    url= f"http://sparrow:8001/api/v1/sparrow-ocr/inference"
+    DATA_FOLDER = os.environ.get("DATA_FOLDER")
+    url= f"http://sparrow:8001/api/v1/sparrow-ocr/inference" # fwd request to sparrow service, port 8001
 
-    filenames = next(walk(os.path.join(image_in_path)), (None, None, []))[2]  # [] if no file
+    filenames = os.listdir(DATA_FOLDER)
     ocr_result = []
     t1 = datetime.datetime.now()
     for filename in filenames:
-        with open(os.path.join(image_in_path, filename), "rb") as pdf_file:
+        with open(os.path.join(DATA_FOLDER, filename), "rb") as pdf_file:
             # Send the file via POST request
             s1 = datetime.datetime.now()
             response = requests.post(url, files={"file": (filename , pdf_file, "application/pdf")})
