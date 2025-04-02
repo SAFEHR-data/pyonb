@@ -16,9 +16,24 @@
 
 ################################################################################
 # Common
-volumes:
-  postgres-source-db:
-  postgres-staging-db:
+x-http-proxy: &http-proxy ${HTTP_PROXY}
+x-https-proxy: &https-proxy ${HTTPS_PROXY}
+x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,backend-api,sparrow
+x-proxy-common: &proxy-common
+    HTTP_PROXY: *http-proxy
+    http_proxy: *http-proxy
+    HTTPS_PROXY: *https-proxy
+    https_proxy: *https-proxy
+    NO_PROXY: *no-proxy
+    no_proxy: *no-proxy
+
+x-build-args-common: &build-args-common
+    <<: [*proxy-common]
+
+x-common-env: &common-env
+    DEBUG: ${DEBUG}
+    LOG_LEVEL: ${LOG_LEVEL}
+    TZ: ${TZ:-Europe/London}
 
 networks:
   pyonb:
@@ -26,45 +41,32 @@ networks:
 ################################################################################
 # Services
 services:
-  postgres-source:
-    image: postgres:17.4
-    restart: always
+  sparrow:
+    profiles: [sparrow]
+    build:
+      context: sparrow
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
     environment:
-        POSTGRES_USER: ${POSTGRES_SOURCE_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_SOURCE_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_SOURCE_DB}
-        PGTZ: ${TZ:-Europe/London}
-    volumes:
-        - type: volume
-          source: postgres-source-db
-          target: /var/lib/postgresql/source-db
+      <<: [*proxy-common, *common-env]
     ports:
-        - "7001:5432"
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    networks:
-          - pyonb
-  postgres-staging:
-    image: postgres:17.4
-    restart: always
+      - "8001:8001"
+    volumes:
+      - ./images:/images
+
+  backend-api:
+    build:
+      context: fastapi
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
     environment:
-        POSTGRES_USER: ${POSTGRES_STAGING_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_STAGING_PASSWORD}
-        POSTGRES_DB: ${POSTGRES_STAGING_DB}
-        PGTZ: ${TZ:-Europe/London}
-    volumes:
-        - type: volume
-          source: postgres-staging-db
-          target: /var/lib/postgresql/staging-db
+      <<: [*proxy-common, *common-env]
+    env_file:
+      - ./.env
     ports:
-        - "7011:5432"
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    networks:
-          - pyonb
+      - "8080:8080"
+    volumes:
+      - ./fastapi/app:/app
+      - ./images:/images
