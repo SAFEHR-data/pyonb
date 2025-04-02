@@ -27,10 +27,14 @@ async def hello():
 @router.post("/sparrow-ocr/inference")
 async def inference():
     logger.info("[POST] /sparrow-ocr/inference")
-    DATA_FOLDER = os.environ.get("DATA_FOLDER")
     url= f"http://sparrow:8001/api/v1/sparrow-ocr/inference" # fwd request to sparrow service, port 8001
+    
+    DATA_FOLDER = os.environ.get("CONTAINER_DATA_FOLDER")  # TODO: fix so env var can be on host or container
+    logger.info(f"DATA_FOLDER: {DATA_FOLDER}")
 
-    filenames = os.listdir(DATA_FOLDER)
+    filenames = [f for f in os.listdir(DATA_FOLDER) if f.endswith(".pdf")]
+    logger.info(f"Filenames in {DATA_FOLDER}: {filenames}")
+
     ocr_result = []
     t1 = datetime.datetime.now()
     for filename in filenames:
@@ -43,6 +47,8 @@ async def inference():
             response_entry = {'filename': filename,
                               'duration_in_second': td.total_seconds() ,
                               'ocr-result': response.text}
+            logger.info(f"Filename: {filename}")
+            logger.info(f"response_entry: {response_entry}")
             ocr_result.append(response_entry)
     t2 = datetime.datetime.now()
     total_duration = t2 - t1

@@ -44,29 +44,31 @@ services:
   sparrow:
     profiles: [sparrow]
     build:
-      context: sparrow
-      dockerfile: Dockerfile
-      args:
-        <<: *build-args-common
-    environment:
-      <<: [*proxy-common, *common-env]
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./images:/images
-
-  backend-api:
-    build:
-      context: ocr-api
+      context: src/ocr/sparrow
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
     environment:
       <<: [*proxy-common, *common-env]
     env_file:
-      - ./.env
+      - ./src/api/.env
+    ports:
+      - "8001:8001"
+    volumes:
+      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+
+  backend-api:
+    build:
+      context: src/api
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
+    environment:
+      <<: [*proxy-common, *common-env]
+    env_file:
+      - ./src/api/.env
     ports:
       - "8080:8080"
     volumes:
-      - ./api/app:/app
-      - ./images:/images
+      - ./src/api/app:/app
+      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
