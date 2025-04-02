@@ -57,7 +57,7 @@ services:
 
   backend-api:
     build:
-      context: fastapi
+      context: ocr-api
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
@@ -68,5 +68,5 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./fastapi/app:/app
+      - ./api/app:/app
       - ./images:/images
