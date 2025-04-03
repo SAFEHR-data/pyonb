@@ -38,23 +38,22 @@ END COMMENT OUT-->
 
 ### Installation & Usage
 
-1. Rename `src/api/.env.sample` to `src/api/.env`.
+1. Rename `.env.sample` to `.env`.
+
+2. Edit `.env` with the correct `HOST_DATA_FOLDER` location, e.g.:
+
+```sh
+HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
+```
 
 > [!IMPORTANT]
-> For GAE usage, rename root `.env.sample` to `.env` and add UCLH proxy details to:
+> For GAE usage, add UCLH proxy details:
 > ```sh
 > http_proxy=
 > https_proxy=
 > HTTPS_PROXY=
 > HTTP_PROXY=
 > ```
-
-
-2. Edit `src/api/.env` with the correct `HOST_DATA_FOLDER` location, e.g.:
-
-```sh
-HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
-```
 
 3. Start the OCR API Server (e.g. using Sparrow):
 

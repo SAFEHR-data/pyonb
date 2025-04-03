@@ -52,7 +52,7 @@ services:
       <<: [*proxy-common, *common-env]
       CONTAINER_DATA_FOLDER: /data
     env_file:
-      - ./src/api/.env
+      - ./.env
     ports:
       - "8001:8001"
     volumes:
@@ -68,7 +68,7 @@ services:
       <<: [*proxy-common, *common-env]
       CONTAINER_DATA_FOLDER: /data
     env_file:
-      - ./src/api/.env
+      - ./.env
     ports:
       - "8080:8080"
     volumes:
