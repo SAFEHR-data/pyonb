@@ -36,12 +36,7 @@ END COMMENT OUT-->
 
 `pyonb` requires Docker and Docker Compose.
 
-### Installation
-
-<!-- How to build or install the application. -->
-
-> [!WARNING]
-> In progress.
+### Installation & Usage
 
 1. Rename `src/api/.env.sample` to `src/api/.env`.
 
