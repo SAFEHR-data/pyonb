@@ -14,6 +14,9 @@ logging.basicConfig(filename="sparrow-ocr." + datetime.datetime.now().strftime("
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+# Detect if in Docker container
+is_docker = os.path.exists('/.dockerenv')
+
 router = APIRouter()
 
 @router.get("/sparrow-ocr")
@@ -22,14 +25,19 @@ async def hello():
     url= f"http://sparrow:8001"
     response = requests.get(url)
 
-    return json.loads(response.content.decode('utf-8'))
+    return json.loads(response.content.decode('utf-8')) 
 
 @router.post("/sparrow-ocr/inference")
 async def inference():
     logger.info("[POST] /sparrow-ocr/inference")
     url= f"http://sparrow:8001/api/v1/sparrow-ocr/inference" # fwd request to sparrow service, port 8001
     
-    DATA_FOLDER = os.environ.get("CONTAINER_DATA_FOLDER")  # TODO: fix so env var can be on host or container
+    if is_docker:
+        logger.info(f"Detected running inside Docker container.")
+        DATA_FOLDER = os.environ.get("CONTAINER_DATA_FOLDER")
+    elif not is_docker:
+        logger.info(f"Detected running on host machine.")
+        DATA_FOLDER = os.environ.get("HOST_DATA_FOLDER")
     logger.info(f"DATA_FOLDER: {DATA_FOLDER}")
 
     filenames = [f for f in os.listdir(DATA_FOLDER) if f.endswith(".pdf")]
