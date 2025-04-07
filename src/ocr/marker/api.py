@@ -2,8 +2,17 @@ import logging
 import datetime
 from fastapi import FastAPI, File, UploadFile, HTTPException, status
 from fastapi.responses import JSONResponse
-from .main import run_marker
 
+# TODO: improve imports - below try statements horrible
+try:
+    # local
+    from .main import run_marker
+except Exception:
+    # Docker container
+    try:
+        from main import run_marker
+    except Exception as e:
+        raise f"marker imports not possible: {e}"
 
 logging.basicConfig(filename="marker." + datetime.datetime.now().strftime("%Y%m%d") + ".log",
                     format='%(asctime)s %(message)s',
