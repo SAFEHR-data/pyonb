@@ -14,7 +14,7 @@
             "args": "${command:pickArgs}"
         },
         {
-            "name": "FastAPI launch",
+            "name": "OCR backend API launch",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
@@ -24,6 +24,22 @@
                 "0.0.0.0",
                 "--port",
                 "8080",
+                "--reload"
+            ],
+            "jinja": true,
+            "justMyCode": true
+        },
+        {
+            "name": "marker API launch",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "src.ocr.marker.api:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8082",
                 "--reload"
             ],
             "jinja": true,
