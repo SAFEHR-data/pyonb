@@ -14,5 +14,3 @@ async def health_check():
     Returns 200 OK status if API is running properly.
     """
     return JSONResponse(status_code=status.HTTP_200_OK, content={"service": "pyonb-ocr-api", "status": "healthy"})
-
-
