@@ -21,7 +21,7 @@ is_docker = os.path.exists('/.dockerenv')
 router = APIRouter()
 
 @router.get("/marker/health")
-async def hello():
+async def health():
     logger.info("[GET] /marker/health")
     url = f"http://marker:8002/health"
     response = requests.get(url)
