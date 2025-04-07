@@ -36,7 +36,8 @@ x-common-env: &common-env
     TZ: ${TZ:-Europe/London}
 
 networks:
-  pyonb:
+  pyonb_ocr_api:
+    driver: bridge
 
 ################################################################################
 # Services
@@ -57,6 +58,27 @@ services:
       - "8001:8001"
     volumes:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+    networks:
+      - pyonb_ocr_api
+
+  marker:
+    profiles: [marker]
+    build:
+      context: src/ocr/marker
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
+    environment:
+      <<: [*proxy-common, *common-env]
+      CONTAINER_DATA_FOLDER: /data
+    env_file:
+      - ./.env
+    ports:
+      - "8002:8002"
+    volumes:
+      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+    networks:
+      - pyonb_ocr_api
 
   backend-api:
     build:
@@ -74,3 +96,5 @@ services:
     volumes:
       - ./src/api/app:/app
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+    networks:
+      - pyonb_ocr_api
