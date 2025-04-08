@@ -1,7 +1,43 @@
 import os
 import subprocess
 import time
+import json
 import pytest
+
+
+def is_healthy(service):
+    """
+    Checks if Docker service is healthy based
+    - Returns True if docker inspect <service> returns "healthy" status
+    """
+    try:
+        result = subprocess.run(
+            ["docker", "inspect", service],
+            capture_output=True,
+            text=True,
+            check=True  # raises CalledProcessError if container not found
+        )
+        inspect_data = json.loads(result.stdout)
+        health_status = inspect_data[0]["State"]["Health"]["Status"]
+        return health_status == "healthy"
+    except (subprocess.CalledProcessError, KeyError, IndexError, json.JSONDecodeError) as e:
+        print(f"Error checking health for {service}: {e}")
+        return False
+
+def wait_for_service(docker_service_name, timeout=180):
+    """
+    Waits for Docker services to build and run
+    - if services are not up within the timeout duration, TimeoutError raised
+    """
+    print(f"Waiting for {docker_service_name} to become healthy...")
+    start = time.time()
+    while time.time() - start < timeout:
+        if is_healthy(docker_service_name):
+            print(f"{docker_service_name} is healthy!")
+            return True
+        time.sleep(20)
+    raise TimeoutError(f"{docker_service_name} did not become healthy in time.")
+
 
 @pytest.fixture(scope="module")
 def start_api_app():
@@ -40,6 +76,10 @@ def start_api_app_docker():
     )
 
     time.sleep(2)
+
+    wait_for_service("pyonb-backend-api-1")  # TODO preferable not to hardcode service strings
+    wait_for_service("pyonb-marker-1")
+    wait_for_service("pyonb-sparrow-1")
 
     yield
 
