@@ -7,11 +7,6 @@ import datetime
 import logging
 import requests
 
-logging.basicConfig(filename="marker-ocr." + datetime.datetime.now().strftime("%Y%m%d") + ".log",
-                    format='%(asctime)s %(message)s',
-                    filemode='a')
-
-# Creating an object
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 

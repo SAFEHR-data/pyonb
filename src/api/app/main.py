@@ -1,6 +1,16 @@
+import logging
+import datetime
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from .routers import sparrow, marker
+
+
+logging.basicConfig(filename="pyonb-" + datetime.datetime.now().strftime("%Y_%m_%d") + ".log",
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 app = FastAPI()
 
