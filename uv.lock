@@ -1721,6 +1721,7 @@ name = "pyonb"
 source = { editable = "." }
 dependencies = [
     { name = "docling" },
+    { name = "pytest" },
 ]
 
 [package.optional-dependencies]
@@ -1755,6 +1756,7 @@ requires-dist = [
     { name = "mkdocstrings-python", marker = "extra == 'docs'" },
     { name = "mypy", marker = "extra == 'dev'" },
     { name = "pre-commit", marker = "extra == 'dev'" },
+    { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-cov", marker = "extra == 'test'" },
     { name = "ruff", marker = "extra == 'dev'" },
