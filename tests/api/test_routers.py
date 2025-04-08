@@ -2,7 +2,7 @@
 import requests
 
 
-def test_router_marker(start_api_app) -> None:
+def test_router_marker(start_api_app_docker) -> None:
     """
     Test router for marker
     """
@@ -10,7 +10,7 @@ def test_router_marker(start_api_app) -> None:
     assert response.status_code == 200
     assert response.json() == {"service":"marker", "status":"healthy"}
 
-def test_router_sparrow(start_api_app) -> None:
+def test_router_sparrow(start_api_app_docker) -> None:
     """
     Test router for sparrow
     - Note: uses sparrow devs' own API
