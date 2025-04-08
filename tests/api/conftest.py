@@ -17,10 +17,31 @@ def start_api_app():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-    
+
     time.sleep(2)
 
     yield  # Yield control to tests
+
+    proc.terminate()
+    proc.wait()
+
+@pytest.fixture(scope="module")
+def start_api_app_docker():
+    """
+    Starts forwarding API and OCR tool APIs with Docker
+    """
+    proc = subprocess.Popen(
+        ["docker", "compose", 
+         "--profile", "marker",
+         "--profile", "sparrow",
+         "up", "-d"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+
+    time.sleep(2)
+
+    yield
 
     proc.terminate()
     proc.wait()
