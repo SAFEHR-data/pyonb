@@ -60,6 +60,12 @@ services:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api
+    healthcheck:
+      test: ["CMD", "curl", "-X", "POST", "http://localhost:8001/sparrow-ocr"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
 
   marker:
     profiles: [marker]
@@ -79,6 +85,12 @@ services:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api
+    healthcheck:
+      test: ["CMD", "curl", "-X", "POST", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
 
   backend-api:
     build:
@@ -98,3 +110,9 @@ services:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api
+    healthcheck:
+      test: ["CMD", "curl", "-X", "POST", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
