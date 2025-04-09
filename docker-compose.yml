@@ -18,7 +18,7 @@
 # Common
 x-http-proxy: &http-proxy ${HTTP_PROXY}
 x-https-proxy: &https-proxy ${HTTPS_PROXY}
-x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,backend-api,sparrow
+x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow
 x-proxy-common: &proxy-common
     HTTP_PROXY: *http-proxy
     http_proxy: *http-proxy
@@ -92,7 +92,7 @@ services:
       retries: 3
       start_period: 30s
 
-  backend-api:
+  ocr-forwarding-api:
     build:
       context: src/api
       dockerfile: Dockerfile
