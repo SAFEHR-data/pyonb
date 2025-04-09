@@ -47,8 +47,12 @@ HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
 ```
 
 > [!IMPORTANT]
-> For GAE usage, add UCLH proxy details:
+> For GAE usage, set OCR service ports and UCLH proxy details:
 > ```sh
+> OCR_FORWARDING_API_PORT=
+> MARKER_API_PORT=
+> SPARROW_API_PORT=
+>
 > http_proxy=
 > https_proxy=
 > HTTPS_PROXY=
@@ -61,7 +65,7 @@ HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
 docker compose --profile sparrow up -d
 ```
 
-4. Send POST request to OCR API Server to execute OCR tool on contents of `HOST_DATA_FOLDER`:
+4. Send POST request to OCR Forwarding API Server (assuming port :8080) to execute OCR tool on contents of `HOST_DATA_FOLDER`:
 ```sh
 curl -X 'POST' --noproxy '*' 'http://127.0.0.1:8080/sparrow-ocr/inference' -H 'accept: application/json' -d ''
 ```

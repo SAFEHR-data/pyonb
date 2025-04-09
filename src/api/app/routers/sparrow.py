@@ -15,6 +15,7 @@ is_docker = os.path.exists('/.dockerenv')
 
 router = APIRouter()
 
+# nb: sparrow hard codes API port to 8001
 @router.get("/sparrow-ocr")
 async def hello():
     logger.info("[GET] /sparrow")
@@ -26,7 +27,7 @@ async def hello():
 @router.post("/sparrow-ocr/inference")
 async def inference():
     logger.info("[POST] /sparrow-ocr/inference")
-    url= f"http://sparrow:8001/api/v1/sparrow-ocr/inference" # fwd request to sparrow service, port 8001
+    url= f"http://sparrow:8001/api/v1/sparrow-ocr/inference" # fwd request to sparrow service
     
     if is_docker:
         logger.info(f"Detected running inside Docker container.")

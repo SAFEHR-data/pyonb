@@ -49,19 +49,21 @@ services:
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
+        SPARROW_API_PORT: ${SPARROW_API_PORT}
     environment:
       <<: [*proxy-common, *common-env]
       CONTAINER_DATA_FOLDER: /data
+      SPARROW_API_PORT: ${SPARROW_API_PORT}
     env_file:
       - ./.env
     ports:
-      - "8001:8001"
+      - "${SPARROW_API_PORT}:${SPARROW_API_PORT}"
     volumes:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api
     healthcheck:
-      test: ["CMD", "curl", "-X", "POST", "http://localhost:8001/sparrow-ocr"]
+      test: ["CMD", "curl", "-X", "POST", "http://localhost:${SPARROW_API_PORT}/sparrow-ocr"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -74,19 +76,21 @@ services:
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
+        MARKER_API_PORT: ${MARKER_API_PORT}
     environment:
       <<: [*proxy-common, *common-env]
       CONTAINER_DATA_FOLDER: /data
+      MARKER_API_PORT: ${MARKER_API_PORT}
     env_file:
       - ./.env
     ports:
-      - "8002:8002"
+      - "${MARKER_API_PORT}:${MARKER_API_PORT}"
     volumes:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api
     healthcheck:
-      test: ["CMD", "curl", "-X", "POST", "http://localhost:8002/health"]
+      test: ["CMD", "curl", "-X", "POST", "http://localhost:${MARKER_API_PORT}/health"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -98,20 +102,22 @@ services:
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
+        OCR_FORWARDING_API_PORT: ${OCR_FORWARDING_API_PORT}
     environment:
       <<: [*proxy-common, *common-env]
       CONTAINER_DATA_FOLDER: /data
+      OCR_FORWARDING_API_PORT: ${OCR_FORWARDING_API_PORT}
     env_file:
       - ./.env
     ports:
-      - "8080:8080"
+      - "${OCR_FORWARDING_API_PORT}:${OCR_FORWARDING_API_PORT}"
     volumes:
       - ./src/api/app:/app
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api
     healthcheck:
-      test: ["CMD", "curl", "-X", "POST", "http://localhost:8080/"]
+      test: ["CMD", "curl", "-X", "POST", "http://localhost:${OCR_FORWARDING_API_PORT}/"]
       interval: 10s
       timeout: 3s
       retries: 3

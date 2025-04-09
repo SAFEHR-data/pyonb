@@ -10,4 +10,4 @@ RUN pip install -r requirements.txt
 
 WORKDIR /app
 
-CMD ["fastapi", "run", "main.py", "--port", "8080"]
+CMD fastapi run main.py --port $OCR_FORWARDING_API_PORT

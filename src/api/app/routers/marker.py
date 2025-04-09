@@ -6,6 +6,15 @@ from fastapi.responses import JSONResponse
 import datetime
 import logging
 import requests
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+if os.getenv('MARKER_API_PORT'):
+    MARKER_API_PORT = os.getenv('MARKER_API_PORT')
+else:
+    raise NameError('MARKER_API_PORT environment variable not found.')
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -18,7 +27,7 @@ router = APIRouter()
 @router.get("/marker/health")
 async def health():
     logger.info("[GET] /marker/health")
-    url = f"http://marker:8002/health"
+    url = f"http://marker:{MARKER_API_PORT}/health"
     response = requests.get(url)
 
     return json.loads(response.content.decode('utf-8'))
@@ -26,7 +35,7 @@ async def health():
 @router.post("/marker/inference")
 async def inference():
     logger.info("[POST] /marker/inference")
-    url=f"http://marker:8002/inference" # URL of marker service - TODO: configure with env var (e.g. so can set 127.0.0.1 if running on host)
+    url=f"http://marker:{MARKER_API_PORT}/inference" # URL of marker service - TODO: configure with env var (e.g. so can set 127.0.0.1 if running on host)
     
     if is_docker:
         logger.info(f"Detected running inside Docker container.")

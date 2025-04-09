@@ -3,7 +3,10 @@ import subprocess
 import time
 import json
 import pytest
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 def is_healthy(service):
     """
@@ -39,6 +42,13 @@ def wait_for_service(docker_service_name, timeout=180):
     raise TimeoutError(f"{docker_service_name} did not become healthy in time.")
 
 
+@pytest.fixture
+def ocr_api_port(scope="module"):
+    if os.getenv('OCR_FORWARDING_API_PORT'):
+        return os.getenv('OCR_FORWARDING_API_PORT')
+    else:
+        raise NameError('OCR_FORWARDING_API_PORT environment variable not found.')
+
 @pytest.fixture(scope="module")
 def start_api_app():
     """
@@ -49,7 +59,7 @@ def start_api_app():
         raise Exception("Cannot find main.py to start API.")
     
     proc = subprocess.Popen(
-        ["fastapi", "run", "src/api/app/main.py", "--host", "127.0.0.1", "--port", "8080"],
+        ["fastapi", "run", "src/api/app/main.py", "--host", "127.0.0.1", "--port", os.environ.get("OCR_FORWARDING_API_PORT")],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
