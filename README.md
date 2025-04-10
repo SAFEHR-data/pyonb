@@ -46,37 +46,41 @@ END COMMENT OUT-->
 HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
 ```
 
-> [!IMPORTANT]
+4. Set OCR service ports, e.g.:
+
+```sh
+OCR_FORWARDING_API_PORT=8080
+SPARROW_API_PORT=8001
+MARKER_API_PORT=8002
+```
+
+> [!IMPORTANT] 
 > For GAE usage, set OCR service ports and UCLH proxy details:
 > ```sh
-> OCR_FORWARDING_API_PORT=
-> MARKER_API_PORT=
-> SPARROW_API_PORT=
->
 > http_proxy=
 > https_proxy=
 > HTTPS_PROXY=
 > HTTP_PROXY=
 > ```
 
-3. Start the OCR API Server (e.g. using Sparrow):
+5. Start the OCR API Server (e.g. using Sparrow and marker):
 
 ```sh
-docker compose --profile sparrow up -d
+docker compose --profile sparrow --profile marker up -d
 ```
 
-4. Send POST request to OCR Forwarding API Server (assuming port :8080) to execute OCR tool on contents of `HOST_DATA_FOLDER`:
-```sh
-curl -X 'POST' --noproxy '*' 'http://127.0.0.1:8080/sparrow-ocr/inference' -H 'accept: application/json' -d ''
-```
+6. Open FastAPI Swagger at http://127.0.0.1:8080/docs to view and execute endpoints.
 
-5. View the JSON response:
+The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_DATA_FOLDER`:
+- **sparrow** - POST `sparrow-ocr/inference`
+- **marker** - POST `marker/inference`
+
+7. View the JSON response:
 
 <center><img src="docs/ocr-json-response-example.png" alt="OCR Server JSON response" width="75%"/></center>
 
 ### Developer Tips:
-- Download the [REST Client extension for VS Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and use in conjunction with the `.http` files in `tests/` to make API requests.
-- Alternatively, use [Postman](https://www.postman.com/) to construct, save and make your API requests.
+- Alternatively to Swagger, use [Postman](https://www.postman.com/) to construct, save and make your API requests.
 
 
 
