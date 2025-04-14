@@ -80,6 +80,24 @@ services:
     networks:
       - pyonb_ocr_api
 
+  paddleocr:
+    profiles: [ paddleocr ]
+    build:
+      context: src/ocr/paddleocr
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
+    environment:
+      <<: [ *proxy-common, *common-env ]
+      CONTAINER_DATA_FOLDER: /data
+    env_file:
+      - ./src/api/.env
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./src/ocr/paddleocr/app:/app
+      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+
   backend-api:
     build:
       context: src/api
