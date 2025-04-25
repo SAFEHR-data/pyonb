@@ -1,18 +1,13 @@
 import json
 import os
+import logging
 
 from fastapi import APIRouter
 import datetime
-import logging
 import requests
-
-logging.basicConfig(filename="sparrow-ocr." + datetime.datetime.now().strftime("%Y%m%d") + ".log",
-                    format='%(asctime)s %(message)s',
-                    filemode='a')
 
 # Creating an object
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 # Detect if in Docker container
 is_docker = os.path.exists('/.dockerenv')

@@ -1,9 +1,11 @@
-import logging
 import datetime
+import logging
 
+import uvicorn
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
-from .routers import sparrow, marker, paddleocr
+
+from routers import paddleocr
 
 logging.basicConfig(filename=datetime.datetime.now().strftime("%Y%m%d") + ".log",
                     format='%(asctime)s %(message)s',
@@ -11,21 +13,21 @@ logging.basicConfig(filename=datetime.datetime.now().strftime("%Y%m%d") + ".log"
                     level=logging.DEBUG,
                     force=True)
 
-app = FastAPI()
-
-app.include_router(sparrow.router)
-app.include_router(marker.router)
-app.include_router(paddleocr.router)
-
-
 # Creating an object
 logger = logging.getLogger()
 
-@app.get("/")
+app = FastAPI()
+app.include_router(paddleocr.router)
+
+@app.get("/health", status_code=status.HTTP_200_OK)
 async def health_check():
     """
     Health check endpoint to verify API is accessible.
     Returns 200 OK status if API is running properly.
     """
-    logger.info("[GET] health_check")
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"service": "pyonb-ocr-api", "status": "healthy"})
+    logger.info("[POST] /health")
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"service": "paddleocr-gpu", "status": "healthy"})
+
+
+if __name__ == "__main__":
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

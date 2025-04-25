@@ -1,4 +1,4 @@
-FROM python:3.12.10-slim-bookworm
+FROM paddlepaddle/paddle:3.0.0-gpu-cuda12.6-cudnn9.5-trt10.5
 
 WORKDIR /app
 RUN chmod -R u+x /app
@@ -11,9 +11,5 @@ RUN apt-get update \
 RUN pip install --upgrade pip
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-RUN pip install paddlepaddle==3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-
-RUN pip install torch==2.6.0+cpu torchvision==0.21.0+cpu torchaudio==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
 CMD ["python", "api.py"]
