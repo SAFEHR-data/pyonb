@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
     "marker-pdf[full]==1.6.2",
     "pytest>=8.3.4",
+    "types-requests>=2.32.0.20250328",
 ]
 description = "Python SDK for OnBase REST API"
 dynamic = [
