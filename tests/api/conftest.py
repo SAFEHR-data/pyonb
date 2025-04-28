@@ -1,12 +1,13 @@
+import json
 import os
 import subprocess
 import time
-import json
+
 import pytest
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
 
 def is_healthy(service):
     """
@@ -18,14 +19,20 @@ def is_healthy(service):
             ["docker", "inspect", service],
             capture_output=True,
             text=True,
-            check=True  # raises CalledProcessError if container not found
+            check=True,  # raises CalledProcessError if container not found
         )
         inspect_data = json.loads(result.stdout)
         health_status = inspect_data[0]["State"]["Health"]["Status"]
         return health_status == "healthy"
-    except (subprocess.CalledProcessError, KeyError, IndexError, json.JSONDecodeError) as e:
+    except (
+        subprocess.CalledProcessError,
+        KeyError,
+        IndexError,
+        json.JSONDecodeError,
+    ) as e:
         print(f"Error checking health for {service}: {e}")
         return False
+
 
 def wait_for_service(docker_service_name, timeout=180):
     """
@@ -44,10 +51,10 @@ def wait_for_service(docker_service_name, timeout=180):
 
 @pytest.fixture
 def ocr_api_port(scope="module"):
-    if os.getenv('OCR_FORWARDING_API_PORT'):
-        return os.getenv('OCR_FORWARDING_API_PORT')
-    else:
-        raise NameError('OCR_FORWARDING_API_PORT environment variable not found.')
+    if os.getenv("OCR_FORWARDING_API_PORT"):
+        return os.getenv("OCR_FORWARDING_API_PORT")
+    raise NameError("OCR_FORWARDING_API_PORT environment variable not found.")
+
 
 @pytest.fixture(scope="module")
 def start_api_app():
@@ -57,11 +64,19 @@ def start_api_app():
     """
     if not os.path.isfile("src/api/app/main.py"):
         raise Exception("Cannot find main.py to start API.")
-    
+
     proc = subprocess.Popen(
-        ["fastapi", "run", "src/api/app/main.py", "--host", "127.0.0.1", "--port", os.environ.get("OCR_FORWARDING_API_PORT")],
+        [
+            "fastapi",
+            "run",
+            "src/api/app/main.py",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            os.environ.get("OCR_FORWARDING_API_PORT"),
+        ],
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stderr=subprocess.PIPE,
     )
 
     time.sleep(2)
@@ -71,23 +86,32 @@ def start_api_app():
     proc.terminate()
     proc.wait()
 
+
 @pytest.fixture(scope="module")
 def start_api_app_docker():
     """
     Starts forwarding API and OCR tool APIs with Docker
     """
     proc = subprocess.Popen(
-        ["docker", "compose", 
-         "--profile", "marker",
-         "--profile", "sparrow",
-         "up", "-d"],
+        [
+            "docker",
+            "compose",
+            "--profile",
+            "marker",
+            "--profile",
+            "sparrow",
+            "up",
+            "-d",
+        ],
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stderr=subprocess.PIPE,
     )
 
     time.sleep(2)
 
-    wait_for_service("pyonb-ocr-forwarding-api-1")  # TODO preferable not to hardcode service strings
+    wait_for_service(
+        "pyonb-ocr-forwarding-api-1"
+    )  # TODO preferable not to hardcode service strings
     wait_for_service("pyonb-marker-1")
     wait_for_service("pyonb-sparrow-1")
 

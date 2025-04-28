@@ -1,5 +1,6 @@
 import os
 import sys
+
 from docling.document_converter import DocumentConverter
 
 
@@ -13,12 +14,12 @@ def convert_pdf_to_markdown(file_path):
 
         converter = DocumentConverter()
         result = converter.convert(file_path)
-        
-        print(f"Docling output:")
+
+        print("Docling output:")
         print(result.document.export_to_markdown())  # nb: markdown for terminal display
 
         return result.document.export_to_text()
-    
+
     except Exception as e:
         print(f"Error processing PDF: {e}")
 
@@ -32,15 +33,13 @@ if __name__ == "__main__":
     input_pdf_path = sys.argv[1]
     output_txt_path = sys.argv[2]
 
-    res = convert_pdf_to_markdown(
-        file_path=input_pdf_path
-        )
+    res = convert_pdf_to_markdown(file_path=input_pdf_path)
 
     try:
         with open(output_txt_path, "w", encoding="utf-8") as f:
             f.write(res)
 
         print(f"Text extracted to {output_txt_path}")
-    
+
     except Exception as e:
         print(f"Error writing OCR output to textfile: {e}")

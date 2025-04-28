@@ -1,4 +1,5 @@
 """Test functions in /src/api/app/routers"""
+
 import requests
 
 
@@ -8,7 +9,8 @@ def test_router_marker(start_api_app_docker, ocr_api_port) -> None:
     """
     response = requests.get(f"http://127.0.0.1:{ocr_api_port}/marker/health")
     assert response.status_code == 200
-    assert response.json() == {"service":"marker", "status":"healthy"}
+    assert response.json() == {"service": "marker", "status": "healthy"}
+
 
 def test_router_sparrow(start_api_app_docker, ocr_api_port) -> None:
     """
@@ -17,7 +19,8 @@ def test_router_sparrow(start_api_app_docker, ocr_api_port) -> None:
     """
     response = requests.get(f"http://127.0.0.1:{ocr_api_port}/sparrow-ocr")
     assert response.status_code == 200
-    assert response.json() == {"message":"Sparrow OCR API"}
+    assert response.json() == {"message": "Sparrow OCR API"}
+
 
 def test_inference_marker(start_api_app_docker, ocr_api_port) -> None:
     """
@@ -26,8 +29,9 @@ def test_inference_marker(start_api_app_docker, ocr_api_port) -> None:
     """
     response = requests.post(f"http://127.0.0.1:{ocr_api_port}/marker/inference")
     assert response.status_code == 200
-    assert response.json()['total_duration_in_second'] > 0
-    assert response.json()['result'][0]['filename'] == 'ms-note-one-page.pdf'
+    assert response.json()["total_duration_in_second"] > 0
+    assert response.json()["result"][0]["filename"] == "ms-note-one-page.pdf"
+
 
 def test_inference_sparrow(start_api_app_docker, ocr_api_port) -> None:
     """
@@ -35,6 +39,5 @@ def test_inference_sparrow(start_api_app_docker, ocr_api_port) -> None:
     """
     response = requests.post(f"http://127.0.0.1:{ocr_api_port}/sparrow-ocr/inference")
     assert response.status_code == 200
-    assert response.json()['total_duration_in_second'] > 0
-    assert response.json()['result'][0]['filename'] == 'ms-note-one-page.pdf'
-    
+    assert response.json()["total_duration_in_second"] > 0
+    assert response.json()["result"][0]["filename"] == "ms-note-one-page.pdf"

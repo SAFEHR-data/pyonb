@@ -1,4 +1,4 @@
-> [!WARNING]  
+> [!WARNING]
 > This repo is under construction.
 
 # pyonb
@@ -13,22 +13,12 @@
 
 END COMMENT OUT-->
 
-<!-- prettier-ignore-start -->
-[tests-badge]:              https://github.com/SAFEHR-data/pyonb/actions/workflows/tests.yml/badge.svg
-[tests-link]:               https://github.com/SAFEHR-data/pyonb/actions/workflows/tests.yml
-[linting-badge]:            https://github.com/SAFEHR-data/pyonb/actions/workflows/linting.yml/badge.svg
-[linting-link]:             https://github.com/SAFEHR-data/pyonb/actions/workflows/linting.yml
-[documentation-badge]:      https://github.com/SAFEHR-data/pyonb/actions/workflows/docs.yml/badge.svg
-[documentation-link]:       https://github.com/SAFEHR-data/pyonb/actions/workflows/docs.yml
-[license-badge]:            https://img.shields.io/badge/License-MIT-yellow.svg
-<!-- prettier-ignore-end -->
-
 - Python SDK for OnBase REST API (eventually)
 - Optical Character Recognition (OCR) API for converting PDFs to structured text
 - Planned OCR tool compatibility:
-   - marker
-   - docling
-   - sparrow
+  - marker
+  - docling
+  - sparrow
 
 ## Getting Started
 
@@ -54,8 +44,9 @@ SPARROW_API_PORT=8001
 MARKER_API_PORT=8002
 ```
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > For GAE usage, set OCR service ports and UCLH proxy details:
+>
 > ```sh
 > http_proxy=
 > https_proxy=
@@ -69,9 +60,10 @@ MARKER_API_PORT=8002
 docker compose --profile sparrow --profile marker up -d
 ```
 
-6. Open FastAPI Swagger at http://127.0.0.1:8080/docs to view and execute endpoints.
+6. Open FastAPI Swagger at <http://127.0.0.1:8080/docs> to view and execute endpoints.
 
 The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_DATA_FOLDER`:
+
 - **sparrow** - POST `sparrow-ocr/inference`
 - **marker** - POST `marker/inference`
 
@@ -79,12 +71,11 @@ The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_
 
 <center><img src="docs/ocr-json-response-example.png" alt="OCR Server JSON response" width="75%"/></center>
 
-### Developer Tips:
+### Developer Tips
+
 - Alternatively to Swagger, use [Postman](https://www.postman.com/) to construct, save and make your API requests.
 
-
-
-<!--COMMENT OUT 
+<!--COMMENT OUT
 We recommend installing in a project specific virtual environment created using
 a environment management tool such as
 [Conda](https://docs.conda.io/projects/conda/en/stable/). To install the latest
@@ -117,7 +108,7 @@ END COMMENT OUT-->
 
 <!-- How to run tests on your local system. -->
 
-<!--COMMENT OUT 
+<!--COMMENT OUT
 
 Tests can be run across all compatible Python versions in isolated environments
 using [`tox`](https://tox.wiki/en/latest/) by running
