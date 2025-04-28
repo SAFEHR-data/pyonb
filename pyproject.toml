@@ -78,6 +78,7 @@ testpaths = [
 [tool.ruff]
 fix = true
 force-exclude = true
+line-length = 120
 lint.ignore = [
     "COM812", # trailing commas (ruff-format recommended)
     "D203", # no-blank-line-before-class
