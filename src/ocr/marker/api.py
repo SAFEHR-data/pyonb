@@ -60,3 +60,4 @@ async def inference(file: UploadFile = File(None)):
         raise HTTPException(status_code=400, detail=f"Failed to process the input.")
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=result)
+    

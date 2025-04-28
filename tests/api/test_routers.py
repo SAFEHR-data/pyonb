@@ -37,3 +37,4 @@ def test_inference_sparrow(start_api_app_docker, ocr_api_port) -> None:
     assert response.status_code == 200
     assert response.json()['total_duration_in_second'] > 0
     assert response.json()['result'][0]['filename'] == 'ms-note-one-page.pdf'
+    

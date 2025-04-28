@@ -77,3 +77,4 @@ async def inference():
                      "result" : ocr_result}
     
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
+    
