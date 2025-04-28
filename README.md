@@ -69,9 +69,10 @@ The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_
 
 7. View the JSON response:
 
-|  |
-|:-------------:|
+|                                                                 |
+| :-------------------------------------------------------------: |
 | ![OCR Server JSON response](docs/ocr-json-response-example.png) |
+
 <!-- <div style="text-align:center;"></center> -->
 
 ### Developer Tips

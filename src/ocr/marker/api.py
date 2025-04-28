@@ -11,9 +11,9 @@ try:
 except Exception:
     # Docker container
     try:
-        from main import run_marker
+        from main import run_marker  # type: ignore
     except Exception as e:
-        raise f"marker imports not possible: {e}"
+        raise RuntimeError(f"Marker imports not possible: {e}")
 
 logging.basicConfig(
     filename="marker." + datetime.datetime.now().strftime("%Y%m%d") + ".log",
