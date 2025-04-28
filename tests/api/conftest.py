@@ -9,9 +9,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+class StartApiError(Exception):
+    """Raised when unable to start API."""
+
+    def __init__(self) -> None:
+        """Initialize the exception with a message."""
+        super().__init__("Cannot find main.py to start API.")
+
+
 def is_healthy(service):
     """
-    Checks if Docker service is healthy based
+    Checks if Docker service is healthy based.
+
     - Returns True if docker inspect <service> returns "healthy" status
     """
     try:
@@ -36,7 +45,8 @@ def is_healthy(service):
 
 def wait_for_service(docker_service_name, timeout=180):
     """
-    Waits for Docker services to build and run
+    Waits for Docker services to build and run.
+
     - if services are not up within the timeout duration, TimeoutError raised
     """
     print(f"Waiting for {docker_service_name} to become healthy...")
@@ -59,11 +69,12 @@ def ocr_api_port(scope="module"):
 @pytest.fixture(scope="module")
 def start_api_app():
     """
-    Starts the forwarding API on the locally host machine
-    - Note: does not start OCR tool APIs
+    Starts the forwarding API on the local host machine.
+
+    - Note: does not start OCR tool APIs.
     """
     if not os.path.isfile("src/api/app/main.py"):
-        raise Exception("Cannot find main.py to start API.")
+        StartApiException()
 
     proc = subprocess.Popen(
         [
@@ -89,9 +100,7 @@ def start_api_app():
 
 @pytest.fixture(scope="module")
 def start_api_app_docker():
-    """
-    Starts forwarding API and OCR tool APIs with Docker
-    """
+    """Starts forwarding API and OCR tool APIs with Docker."""
     proc = subprocess.Popen(
         [
             "docker",
@@ -109,7 +118,7 @@ def start_api_app_docker():
 
     time.sleep(2)
 
-    wait_for_service("pyonb-ocr-forwarding-api-1")  # TODO preferable not to hardcode service strings
+    wait_for_service("pyonb-ocr-forwarding-api-1")  # TODO(tom): preferable not to hardcode service strings
     wait_for_service("pyonb-marker-1")
     wait_for_service("pyonb-sparrow-1")
 
