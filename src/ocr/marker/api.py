@@ -60,13 +60,9 @@ async def inference(file: UploadFile = File(None)):
                     f.write(content)
                 result, _ = run_marker(f"temp_api_file_{file.filename}")
             except Exception as e:
-                raise HTTPException(
-                    status_code=400, detail=f"Failed to run marker. Error: {e}"
-                )
+                raise HTTPException(status_code=400, detail=f"Failed to run marker. Error: {e}")
         else:
-            raise HTTPException(
-                status_code=400, detail="Invalid file type. Only PDF are allowed."
-            )
+            raise HTTPException(status_code=400, detail="Invalid file type. Only PDF are allowed.")
 
     if result is None:
         raise HTTPException(status_code=400, detail="Failed to process the input.")

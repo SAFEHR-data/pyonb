@@ -48,9 +48,7 @@ async def inference():
         with open(os.path.join(DATA_FOLDER, filename), "rb") as pdf_file:
             # Send the file via POST request
             s1 = datetime.datetime.now()
-            response = requests.post(
-                url, files={"file": (filename, pdf_file, "application/pdf")}
-            )
+            response = requests.post(url, files={"file": (filename, pdf_file, "application/pdf")})
             s2 = datetime.datetime.now()
             td = s2 - s1
             response_entry = {

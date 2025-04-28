@@ -109,9 +109,7 @@ def start_api_app_docker():
 
     time.sleep(2)
 
-    wait_for_service(
-        "pyonb-ocr-forwarding-api-1"
-    )  # TODO preferable not to hardcode service strings
+    wait_for_service("pyonb-ocr-forwarding-api-1")  # TODO preferable not to hardcode service strings
     wait_for_service("pyonb-marker-1")
     wait_for_service("pyonb-sparrow-1")
 

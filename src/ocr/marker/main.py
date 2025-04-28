@@ -50,9 +50,7 @@ def run_marker(input_pdf_path):
     """
     Execute marker.
     """
-    res, images = convert_pdf_to_markdown(
-        file_path=input_pdf_path, use_llm=True, output_format="json"
-    )
+    res, images = convert_pdf_to_markdown(file_path=input_pdf_path, use_llm=True, output_format="json")
 
     return res, images
 
