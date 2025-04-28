@@ -165,7 +165,7 @@ END COMMENT OUT-->
 
 ## Acknowledgements
 
-This work was funded by NIHR UCLH/UCL Biomedical Research Centre.
+This work was funded by the National Institute for Health and Care Research (NIHR, award code NIHR302495).
 
 This project is developed in collaboration with the
 [Centre for Advanced Research Computing](https://ucl.ac.uk/arc), University
