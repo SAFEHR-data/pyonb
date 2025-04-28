@@ -83,9 +83,14 @@ lint.ignore = [
     "COM812", # trailing commas (ruff-format recommended)
     "D203", # no-blank-line-before-class
     "D212", # multi-line-summary-first-line
+    "D401", # imperative mood docstrings
     "D407", # removed dashes lines under sections
     "D417", # argument description in docstring (unreliable)
+    "S607", # partial pathing for processes
     "ISC001", # simplify implicit str concatenation (ruff-format recommended)
+    "PTH113", # pathlib
+    "FIX002", # TODOs 
+    "TD003", # TODOs
 ]
 lint.per-file-ignores = {"tests*" = [
     "INP001", # File is part of an implicit namespace package.
