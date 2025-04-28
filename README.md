@@ -1,7 +1,7 @@
+# pyonb
+
 > [!WARNING]
 > This repo is under construction.
-
-# pyonb
 
 <!--COMMENT OUT
 
@@ -69,7 +69,10 @@ The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_
 
 7. View the JSON response:
 
-<center><img src="docs/ocr-json-response-example.png" alt="OCR Server JSON response" width="75%"/></center>
+|  |
+|:-------------:|
+| ![OCR Server JSON response](docs/ocr-json-response-example.png) |
+<!-- <div style="text-align:center;"></center> -->
 
 ### Developer Tips
 

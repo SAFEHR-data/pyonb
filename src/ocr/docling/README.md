@@ -1,6 +1,6 @@
-## Instructions
+# Instructions
 
-### Python
+## Python
 
 NB: below MUST have absolute paths
 
@@ -9,7 +9,7 @@ cd pyonb/ocr/docling
 python main.py ../tests/ms-note-one-page.pdf ../tests/output.txt
 ```
 
-### Docker Compose
+## Docker Compose
 
 NB: Set DATA_FOLDER in .env, e.g: DATA_FOLDER=path/to/folder/containing/PDF
 
