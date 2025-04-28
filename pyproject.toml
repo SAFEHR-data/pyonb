@@ -86,10 +86,10 @@ lint.ignore = [
     "D401", # imperative mood docstrings
     "D407", # removed dashes lines under sections
     "D417", # argument description in docstring (unreliable)
-    "S607", # partial pathing for processes
+    "FIX002", # TODOs
     "ISC001", # simplify implicit str concatenation (ruff-format recommended)
     "PTH113", # pathlib
-    "FIX002", # TODOs 
+    "S607", # partial pathing for processes
     "TD003", # TODOs
 ]
 lint.per-file-ignores = {"tests*" = [
