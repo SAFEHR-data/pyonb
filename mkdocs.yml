@@ -48,7 +48,7 @@ plugins:
       handlers:
         python:
           docstring_style: google
-          import:
+          inventories:
             - "https://docs.python.org/3/objects.inv"
           options:
             show_submodules: true
