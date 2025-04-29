@@ -15,9 +15,9 @@
 
 
 ################################################################################
-# Common
-networks:
-  pyonb:
+# Note:
+# - Use this file to invoke docling on single files
+# - e.g. docker compose run docling data/ms-note-one-page.pdf data/output.txt
 
 ################################################################################
 # Services

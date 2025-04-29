@@ -28,7 +28,7 @@ def convert_pdf_to_markdown(file_path, output_format="markdown", use_llm=True):
         config_parser = ConfigParser(config)
         # Create the converter with the necessary settings
         converter = setup_converter(config_parser.generate_config_dict(), config_parser)
-
+        
         # Process the PDF file and convert to the specified output format
         rendered = converter(file_path)
         
@@ -40,6 +40,17 @@ def convert_pdf_to_markdown(file_path, output_format="markdown", use_llm=True):
     except Exception as e:
         print(f"Error processing PDF: {e}")
 
+def run_marker(input_pdf_path):
+    """
+    Execute marker.
+    """
+    res, images = convert_pdf_to_markdown(
+        file_path=input_pdf_path,
+        use_llm=True,
+        output_format="json"
+        )
+    
+    return res, images
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -50,11 +61,7 @@ if __name__ == "__main__":
     input_pdf_path = sys.argv[1]
     output_txt_path = sys.argv[2]
 
-    res, images = convert_pdf_to_markdown(
-        file_path=input_pdf_path,
-        use_llm=True,
-        output_format="json"
-        )
+    res, images = run_marker(input_pdf_path)
 
     try:
         with open(output_txt_path, "w", encoding="utf-8") as f:

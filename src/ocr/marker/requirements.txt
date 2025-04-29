@@ -1,0 +1,7 @@
+fastapi[standard]
+uvicorn
+requests
+python-dotenv
+ollama
+marker-pdf[full]
+accelerate
