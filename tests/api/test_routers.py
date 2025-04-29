@@ -37,6 +37,7 @@ def test_inference_marker(ocr_api_port: str) -> None:
     assert response.json()["result"][0]["filename"] == "ms-note-one-page.pdf"
 
 
+@pytest.mark.usefixtures("start_api_app_docker")
 def test_inference_sparrow(ocr_api_port: str) -> None:
     """Test PDF conversion using sparrow."""
     response = requests.post(f"http://127.0.0.1:{ocr_api_port}/sparrow-ocr/inference", timeout=5)

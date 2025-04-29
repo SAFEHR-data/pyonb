@@ -12,6 +12,7 @@ def test_start_api_and_healthy(ocr_api_port: str) -> None:
     assert response.json() == {"service": "pyonb-ocr-api", "status": "healthy"}
 
 
+@pytest.mark.usefixtures("start_api_app_docker")
 def test_start_api_and_healthy_docker(ocr_api_port: str) -> None:
     """Test API app comes up and healthcheck returns 200."""
     response = requests.get(f"http://127.0.0.1:{ocr_api_port}/", timeout=5)
