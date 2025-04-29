@@ -1,3 +1,5 @@
+"""OCR API Server."""
+
 import datetime
 import logging
 
@@ -7,7 +9,7 @@ from fastapi.responses import JSONResponse
 from .routers import marker, sparrow
 
 logging.basicConfig(
-    filename="pyonb-" + datetime.datetime.now().strftime("%Y_%m_%d") + ".log",
+    filename="pyonb-" + datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d") + ".log",
     format="%(asctime)s %(message)s",
     filemode="a",
 )
@@ -22,9 +24,10 @@ app.include_router(marker.router)
 
 
 @app.get("/")
-async def health_check():
+async def health_check() -> JSONResponse:
     """
     Health check endpoint to verify API is accessible.
+
     Returns 200 OK status if API is running properly.
     """
     return JSONResponse(

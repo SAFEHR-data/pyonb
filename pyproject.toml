@@ -19,7 +19,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "fastapi[standard]>=0.115.12",
     "marker-pdf[full]==1.6.2",
+    "opencv-python>=4.11.0.86",
     "pytest>=8.3.4",
     "types-requests>=2.32.0.20250328",
 ]
@@ -86,9 +88,13 @@ lint.ignore = [
     "D401", # imperative mood docstrings
     "D407", # removed dashes lines under sections
     "D417", # argument description in docstring (unreliable)
+    "FBT001", # bool args
+    "FBT002", # bool args
     "FIX002", # TODOs
     "ISC001", # simplify implicit str concatenation (ruff-format recommended)
+    "N806", # lowercase vars
     "PTH113", # pathlib
+    "S603", # subprocess
     "S607", # partial pathing for processes
     "TD003", # TODOs
 ]

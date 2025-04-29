@@ -1,12 +1,25 @@
+"""Testing setup."""
+
 import json
+import logging
 import os
 import subprocess
 import time
+from collections.abc import Generator
 
 import pytest
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+logging.basicConfig(
+    format="%(asctime)s %(message)s",
+    filemode="a",
+)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 class StartApiError(Exception):
@@ -17,7 +30,7 @@ class StartApiError(Exception):
         super().__init__("Cannot find main.py to start API.")
 
 
-def is_healthy(service):
+def is_healthy(service: str) -> str | bool:
     """
     Checks if Docker service is healthy based.
 
@@ -32,49 +45,53 @@ def is_healthy(service):
         )
         inspect_data = json.loads(result.stdout)
         health_status = inspect_data[0]["State"]["Health"]["Status"]
-        return health_status == "healthy"
     except (
         subprocess.CalledProcessError,
         KeyError,
         IndexError,
         json.JSONDecodeError,
     ) as e:
-        print(f"Error checking health for {service}: {e}")
+        logger.info("Error checking health for %s: %s", service, e)
         return False
+    else:
+        return health_status == "healthy"
 
 
-def wait_for_service(docker_service_name, timeout=180):
+def wait_for_service(docker_service_name: str, timeout: int = 180) -> bool:
     """
     Waits for Docker services to build and run.
 
     - if services are not up within the timeout duration, TimeoutError raised
     """
-    print(f"Waiting for {docker_service_name} to become healthy...")
+    logger.info("Waiting for %s to become healthy...", docker_service_name)
     start = time.time()
     while time.time() - start < timeout:
         if is_healthy(docker_service_name):
-            print(f"{docker_service_name} is healthy!")
+            logger.info("%s is healthy!", docker_service_name)
             return True
         time.sleep(20)
-    raise TimeoutError(f"{docker_service_name} did not become healthy in time.")
-
-
-@pytest.fixture
-def ocr_api_port(scope="module"):
-    if os.getenv("OCR_FORWARDING_API_PORT"):
-        return os.getenv("OCR_FORWARDING_API_PORT")
-    raise NameError("OCR_FORWARDING_API_PORT environment variable not found.")
+    e = f"{docker_service_name} did not become healthy in time."
+    raise TimeoutError(e)
 
 
 @pytest.fixture(scope="module")
-def start_api_app():
+def ocr_api_port() -> str | None:
+    """Returns OCR_FORWARDING_API_PORT."""
+    if os.getenv("OCR_FORWARDING_API_PORT"):
+        return os.getenv("OCR_FORWARDING_API_PORT")
+    e = "OCR_FORWARDING_API_PORT environment variable not found."
+    raise NameError(e)
+
+
+@pytest.fixture(scope="module")
+def start_api_app() -> Generator:
     """
     Starts the forwarding API on the local host machine.
 
     - Note: does not start OCR tool APIs.
     """
     if not os.path.isfile("src/api/app/main.py"):
-        StartApiException()
+        StartApiError()
 
     proc = subprocess.Popen(
         [
@@ -84,7 +101,7 @@ def start_api_app():
             "--host",
             "127.0.0.1",
             "--port",
-            os.environ.get("OCR_FORWARDING_API_PORT"),
+            str(os.environ.get("OCR_FORWARDING_API_PORT")),
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -99,7 +116,7 @@ def start_api_app():
 
 
 @pytest.fixture(scope="module")
-def start_api_app_docker():
+def start_api_app_docker() -> Generator:
     """Starts forwarding API and OCR tool APIs with Docker."""
     proc = subprocess.Popen(
         [

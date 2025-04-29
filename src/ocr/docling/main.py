@@ -1,45 +1,48 @@
-import os
+"""Docling OCR runner."""
+
+import logging
 import sys
+from pathlib import Path
 
 from docling.document_converter import DocumentConverter
 
+logger = logging.getLogger()
 
-def convert_pdf_to_markdown(file_path):
-    """
-    Convert the PDF to Markdown using Docling.
-    """
+
+def convert_pdf_to_markdown(file_path: str | Path):  # noqa: ANN201
+    """Convert the PDF to Markdown using Docling."""
     try:
-        print(f"CWD: {os.getcwd()}")
-        print(f"LISTDIR: {os.listdir()}")
+        logger.info("CWD: %s", Path.cwd())
+        logger.info("LISTDIR: %s", list(Path("some_directory").iterdir()))
 
         converter = DocumentConverter()
         result = converter.convert(file_path)
 
-        print("Docling output:")
-        print(result.document.export_to_markdown())  # nb: markdown for terminal display
+        logger.info("Docling output:")
+        logger.info(result.document.export_to_markdown())  # nb: markdown for terminal display
 
         return result.document.export_to_text()
 
-    except Exception as e:
-        print(f"Error processing PDF: {e}")
+    except Exception:
+        logger.exception("Error processing PDF.")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python main.py <input_pdf_path> <output_txt_path>")
+    if len(sys.argv) != 3:  # noqa: PLR2004
+        logger.info("Usage: python main.py <input_pdf_path> <output_txt_path>")
         sys.exit(1)
 
-    # TODO: more robust file pathing - Python and Docker
-    input_pdf_path = sys.argv[1]
-    output_txt_path = sys.argv[2]
+    # TODO(tom): more robust file pathing - Python and Docker
+    input_pdf_path = Path(sys.argv[1])
+    output_txt_path = Path(sys.argv[2])
 
     res = convert_pdf_to_markdown(file_path=input_pdf_path)
 
     try:
-        with open(output_txt_path, "w", encoding="utf-8") as f:
+        with output_txt_path.open("w", encoding="utf-8") as f:
             f.write(res)
 
-        print(f"Text extracted to {output_txt_path}")
+        logger.exception("Text extracted to %s", output_txt_path)
 
-    except Exception as e:
-        print(f"Error writing OCR output to textfile: {e}")
+    except Exception:
+        logger.exception("Error writing OCR output to textfile.")
