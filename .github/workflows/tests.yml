@@ -52,11 +52,13 @@ jobs:
             uv pip list
 
       - name: Copy .env file
-        run: cp tests/.env.tests tests/.env
+        run: |
+          cp ./tests/.env.tests ./tests/.env
+          cat ./tests/.env
 
       - name: Start Docker services
         run: |
-          docker compose --env-file tests/.env --profile marker --profile sparrow up -d
+          docker compose --env-file ./tests/.env --profile marker --profile sparrow up -d
 
       - name: Wait for services to be healthy
         run: |
@@ -79,4 +81,4 @@ jobs:
 
       - name: Tear down services
         if: always()
-        run: docker compose --profile marker --profile sparrow --rmi all --volumes --remove-orphans
+        run: docker compose --profile marker --profile sparrow down --rmi all --volumes --remove-orphans
