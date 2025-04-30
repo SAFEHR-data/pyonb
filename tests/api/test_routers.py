@@ -3,11 +3,9 @@ Test functions in /src/api/app/routers.
 
 - Note: Tests require running Docker services.
 """
-import pytest
 import requests
 
 
-@pytest.mark.usefixtures("start_api_app_docker")
 def test_router_marker(ocr_forwarding_api_port: str) -> None:
     """Test healthcheck for marker."""
     response = requests.get(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/health", timeout=5)
@@ -15,7 +13,6 @@ def test_router_marker(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"service": "marker", "status": "healthy"}
 
 
-@pytest.mark.usefixtures("start_api_app_docker")
 def test_router_sparrow(ocr_forwarding_api_port: str) -> None:
     """
     Test healthcheck for sparrow.
@@ -27,23 +24,41 @@ def test_router_sparrow(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"message": "Sparrow OCR API"}
 
 
-@pytest.mark.usefixtures("start_api_app_docker")
 def test_inference_marker(ocr_forwarding_api_port: str) -> None:
     """
     Test PDF conversion using marker.
 
-    - Note: this may take 10s of seconds due to inference
+    Note:
+    - may take ~minutes to perform inference
+    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+
     """
-    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference", timeout=5)
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference", timeout=60*60)
     assert response.status_code == requests.codes.ok
     assert response.json()["total_duration_in_second"] > 0
-    assert response.json()["result"][0]["filename"] == "ms-note-one-page.pdf"
+    assert response.json()["result"][0]["filename"] in {
+        "ms-note-one-page.pdf",
+        "uk-hospital-note.pdf",
+        "uk-hospital-note-2.pdf",
+        "uk-hospital-note-3.pdf"
+    }
 
 
-@pytest.mark.usefixtures("start_api_app_docker")
 def test_inference_sparrow(ocr_forwarding_api_port: str) -> None:
-    """Test PDF conversion using sparrow."""
-    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference", timeout=5)
+    """
+    Test PDF conversion using sparrow.
+
+    Note:
+    - may take ~minutes to perform inference
+    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+
+    """
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference", timeout=60*60)
     assert response.status_code == requests.codes.ok
     assert response.json()["total_duration_in_second"] > 0
-    assert response.json()["result"][0]["filename"] == "ms-note-one-page.pdf"
+    assert response.json()["result"][0]["filename"] in {
+        "ms-note-one-page.pdf",
+        "uk-hospital-note.pdf",
+        "uk-hospital-note-2.pdf",
+        "uk-hospital-note-3.pdf"
+    }
