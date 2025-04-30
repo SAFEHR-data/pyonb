@@ -8,6 +8,7 @@ import time
 from collections.abc import Generator
 
 import pytest
+from _pytest.fixtures import SubRequest
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,12 +31,14 @@ class StartApiError(Exception):
         super().__init__("Cannot find main.py to start API.")
 
 
-def is_healthy(service: str) -> str | bool:
+@pytest.fixture(scope="module")
+def check_container_healthy(request: SubRequest) -> str | bool:
     """
-    Checks if Docker service is healthy based.
+    Checks if Docker service is healthy based on docker inspect health status.
 
     - Returns True if docker inspect <service> returns "healthy" status
     """
+    service = request.param
     try:
         result = subprocess.run(
             ["docker", "inspect", service],
@@ -57,25 +60,8 @@ def is_healthy(service: str) -> str | bool:
         return health_status == "healthy"
 
 
-def wait_for_service(docker_service_name: str, timeout: int = 180) -> bool:
-    """
-    Waits for Docker services to build and run.
-
-    - if services are not up within the timeout duration, TimeoutError raised
-    """
-    logger.info("Waiting for %s to become healthy...", docker_service_name)
-    start = time.time()
-    while time.time() - start < timeout:
-        if is_healthy(docker_service_name):
-            logger.info("%s is healthy!", docker_service_name)
-            return True
-        time.sleep(20)
-    e = f"{docker_service_name} did not become healthy in time."
-    raise TimeoutError(e)
-
-
 @pytest.fixture(scope="module")
-def ocr_api_port() -> str | None:
+def ocr_forwarding_api_port() -> str | None:
     """Returns OCR_FORWARDING_API_PORT."""
     if os.getenv("OCR_FORWARDING_API_PORT"):
         return os.getenv("OCR_FORWARDING_API_PORT")
@@ -84,7 +70,7 @@ def ocr_api_port() -> str | None:
 
 
 @pytest.fixture(scope="module")
-def start_api_app() -> Generator:
+def local_start_api_app() -> Generator:
     """
     Starts the forwarding API on the local host machine.
 
@@ -110,36 +96,6 @@ def start_api_app() -> Generator:
     time.sleep(2)
 
     yield  # Yield control to tests
-
-    proc.terminate()
-    proc.wait()
-
-
-@pytest.fixture(scope="module")
-def start_api_app_docker() -> Generator:
-    """Starts forwarding API and OCR tool APIs with Docker."""
-    proc = subprocess.Popen(
-        [
-            "docker",
-            "compose",
-            "--profile",
-            "marker",
-            "--profile",
-            "sparrow",
-            "up",
-            "-d",
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-
-    time.sleep(2)
-
-    wait_for_service("pyonb-ocr-forwarding-api-1")  # TODO(tom): preferable not to hardcode service strings
-    wait_for_service("pyonb-marker-1")
-    wait_for_service("pyonb-sparrow-1")
-
-    yield
 
     proc.terminate()
     proc.wait()
