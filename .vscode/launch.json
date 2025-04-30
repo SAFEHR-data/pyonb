@@ -13,7 +13,7 @@
       "args": "${command:pickArgs}"
     },
     {
-      "name": "OCR backend API launch",
+      "name": "OCR forwarding API launch",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -22,7 +22,7 @@
         "--host",
         "0.0.0.0",
         "--port",
-        "8080",
+        "8110",
         "--reload"
       ],
       "jinja": true,
@@ -38,7 +38,7 @@
         "--host",
         "0.0.0.0",
         "--port",
-        "8002",
+        "8112",
         "--reload"
       ],
       "jinja": true,
