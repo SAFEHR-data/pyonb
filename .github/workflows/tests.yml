@@ -45,11 +45,16 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-            uv sync
+          uv sync
 
       - name: Display Python dependencies
         run: |
-            uv pip list
+          uv pip list
+
+      - name: Verify tox installed
+        working-directory: ${{ github.workspace }}
+        run: |
+          tox -h
 
       - name: Copy .env file
         working-directory: ${{ github.workspace }}
@@ -66,10 +71,14 @@ jobs:
         run: |
           docker compose ps
           docker compose logs
-          sleep 90
+          sleep 30
+          docker compose ps
+          docker compose logs
 
       - name: Test with tox
-        run: tox run
+        working-directory: ${{ github.workspace }}
+        run: |
+          tox run
 
       - name: Tear down services
         working-directory: ${{ github.workspace }}
