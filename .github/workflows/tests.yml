@@ -52,19 +52,20 @@ jobs:
             uv pip list
 
       - name: Copy .env file
+        working-directory: ${{ github.workspace }}
         run: |
-          cp ./tests/.env.tests ./tests/.env
-          cat ./tests/.env
+          cp ./tests/.env.tests .env
+          docker compose config
 
-      - name: Load environment variables
-        run: |
-          set -o allexport
-          source ./tests/.env
-          set +o allexport
+      # - name: Load environment variables
+      #   run: |
+      #     set -o allexport
+      #     source ./tests/.env
+      #     set +o allexport
 
-      - name: Display environment variables
-        run: |
-          env
+      # - name: Display environment variables
+      #   run: |
+      #     env
 
       - name: Start Docker services
         working-directory: ${{ github.workspace }}
