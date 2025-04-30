@@ -47,27 +47,49 @@ async def inference() -> JSONResponse:
     # URL of marker service
     # TODO(tom): configure with env var (e.g. so can set 127.0.0.1 if running on host)
 
+    logger.info("HOST_DATA_FOLDER: %s", str(os.environ.get("HOST_DATA_FOLDER")))
+
     if is_docker:
         logger.info("Detected running inside Docker container.")
         DATA_FOLDER = str(os.environ.get("CONTAINER_DATA_FOLDER"))
     elif not is_docker:
         logger.info("Detected running on host machine.")
         DATA_FOLDER = str(os.environ.get("HOST_DATA_FOLDER"))
-    logger.info("DATA_FOLDER: %s", DATA_FOLDER)
 
-    filenames = [f for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
+    if Path(DATA_FOLDER).exists():
+        logger.info("DATA_FOLDER: %s", DATA_FOLDER)
+    else:
+        e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
+        logger.exception(NotADirectoryError(e))
+        raise NotADirectoryError(e)
+
+    filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)
 
     ocr_result = []
     t1 = datetime.datetime.now(datetime.UTC)
     for filename in filenames:
-        with Path.open(Path(str(DATA_FOLDER)) / Path(str(filename)), "rb") as pdf_file:
+
+        abs_file_path = Path(DATA_FOLDER) / Path(filename)
+        logger.info("abs_file_path: %s", abs_file_path)
+        if not abs_file_path.exists():
+            e = f"{abs_file_path!s} file not found or does not exist."
+            logger.exception(FileNotFoundError(e))
+            raise FileNotFoundError(e)
+
+        with Path.open(abs_file_path, "rb") as pdf_file:
             # Send the file via POST request
             s1 = datetime.datetime.now(datetime.UTC)
 
             files = {"file": (str(filename), pdf_file, "application/pdf")}
             headers = {"accept": "application/json"}
-            response = requests.post(url, files=files, headers=headers, timeout=5)  # noqa: ASYNC210
+
+            logger.info("post request - url: %s", url)
+            logger.info("post request - files: %s", files)
+            logger.info("post request - headers: %s", headers)
+
+            # nb: timeout currently arbitrarily one hour
+            response = requests.post(url, files=files, headers=headers, timeout=60*60)  # noqa: ASYNC210
 
             s2 = datetime.datetime.now(datetime.UTC)
             td = s2 - s1
