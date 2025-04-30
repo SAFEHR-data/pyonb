@@ -137,8 +137,6 @@ env_list = [
 env_run_base = {commands = [
     [
         "pytest",
-        "--cov",
-        "--cov-report=xml",
     ],
 ], extras = [
     "test",
