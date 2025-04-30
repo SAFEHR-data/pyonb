@@ -31,11 +31,11 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - name: Cache tox
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
-        with:
-          path: .tox
-          key: tox-${{hashFiles('pyproject.toml') }}
+      # - name: Cache tox
+      #   uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+      #   with:
+      #     path: .tox
+      #     key: tox-${{hashFiles('pyproject.toml') }}
 
       - name: Cache docker/setup-buildx
         uses: docker/setup-buildx-action@v3
@@ -44,6 +44,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Install Python dependencies
+        working-directory: ${{ github.workspace }}
         run: |
           uv venv
           source ./venv/bin/activate
