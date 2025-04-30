@@ -45,6 +45,8 @@ jobs:
 
       - name: Install Python dependencies
         run: |
+          uv venv
+          source ./venv/bin/activate
           uv sync
 
       - name: Display Python dependencies
