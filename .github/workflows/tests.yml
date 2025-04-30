@@ -44,10 +44,9 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Install Python dependencies
-        working-directory: ${{ github.workspace }}
         run: |
           uv venv
-          source ./venv/bin/activate
+          source ./.venv/bin/activate
           uv sync
 
       - name: Display Python dependencies
