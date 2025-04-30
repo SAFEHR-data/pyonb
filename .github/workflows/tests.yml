@@ -56,9 +56,20 @@ jobs:
           cp ./tests/.env.tests ./tests/.env
           cat ./tests/.env
 
-      - name: Start Docker services
+      - name: Load environment variables
         run: |
-          docker compose --env-file ./tests/.env --profile marker --profile sparrow up -d
+          set -o allexport
+          source ./tests/.env
+          set +o allexport
+
+      - name: Display environment variables
+        run: |
+          env
+
+      - name: Start Docker services
+        working-directory: ${{ github.workspace }}
+        run: |
+          docker compose --profile marker --profile sparrow up -d
 
       - name: Wait for services to be healthy
         run: |
@@ -80,5 +91,7 @@ jobs:
         run: tox run
 
       - name: Tear down services
+        working-directory: ${{ github.workspace }}
         if: always()
-        run: docker compose --profile marker --profile sparrow down --rmi all --volumes --remove-orphans
+        run: |
+          docker compose --profile marker --profile sparrow down --rmi all --volumes --remove-orphans
