@@ -1874,6 +1874,8 @@ dependencies = [
     { name = "marker-pdf", extra = ["full"] },
     { name = "opencv-python" },
     { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "tox" },
     { name = "types-requests" },
 ]
 
@@ -1913,8 +1915,10 @@ requires-dist = [
     { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest", marker = "extra == 'test'" },
+    { name = "pytest-cov", specifier = ">=6.0.0" },
     { name = "pytest-cov", marker = "extra == 'test'" },
     { name = "ruff", marker = "extra == 'dev'" },
+    { name = "tox", specifier = ">=4.24.1" },
     { name = "tox", marker = "extra == 'dev'" },
     { name = "twine", marker = "extra == 'dev'" },
     { name = "types-requests", specifier = ">=2.32.0.20250328" },

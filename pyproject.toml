@@ -22,7 +22,9 @@ dependencies = [
     "fastapi[standard]>=0.115.12",
     "marker-pdf[full]==1.6.2",
     "opencv-python>=4.11.0.86",
+    "pytest-cov>=6.0.0",
     "pytest>=8.3.4",
+    "tox>=4.24.1",
     "types-requests>=2.32.0.20250328",
 ]
 description = "Python SDK for OnBase REST API"
