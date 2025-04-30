@@ -59,7 +59,6 @@ async def inference() -> dict:
     ocr_result = []
     t1 = datetime.datetime.now(datetime.UTC)
     for filename in filenames:
-
         abs_file_path = Path(DATA_FOLDER) / Path(filename)
         logger.info("abs_file_path: %s", abs_file_path)
         if not abs_file_path.exists():
@@ -79,7 +78,7 @@ async def inference() -> dict:
             logger.info("post request - headers: %s", headers)
 
             # nb: timeout currently arbitrarily one hour
-            response = requests.post(url, files=files, headers=headers, timeout=60*60)  # noqa: ASYNC210
+            response = requests.post(url, files=files, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
 
             s2 = datetime.datetime.now(datetime.UTC)
             td = s2 - s1
