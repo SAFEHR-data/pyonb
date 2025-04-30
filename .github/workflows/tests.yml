@@ -60,7 +60,7 @@ jobs:
       - name: Start Docker services
         working-directory: ${{ github.workspace }}
         run: |
-          docker compose --profile marker up -d
+          docker compose --profile marker up -d ocr-forwarding-api
 
       - name: Wait for services to be healthy
         run: |
