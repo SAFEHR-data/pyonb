@@ -33,7 +33,10 @@ END COMMENT OUT-->
 2. Edit `.env` with the correct `HOST_DATA_FOLDER` location, e.g.:
 
 ```sh
-HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
+HOST_DATA_FOLDER="/absolute/path/to/documents/folder"
+
+# e.g. for unit tests on GAE:
+# HOST_DATA_FOLDER="/gae/pyonb/tests/data/single_synthetic_doc"
 ```
 
 4. Set OCR service ports, e.g.:
