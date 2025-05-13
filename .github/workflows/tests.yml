@@ -115,10 +115,20 @@ jobs:
           echo "/home/runner usage:"
           du -sh /home/runner/*
 
-      - name: Test with tox
+      - name: Test with tox - test_local_start_api_and_healthy
         working-directory: ${{ github.workspace }}
         run: |
-          tox run
+          tox -- tests/api/test_app.py::test_local_start_api_and_healthy
+
+      - name: Test with tox - marker healthcheck
+        working-directory: ${{ github.workspace }}
+        run: |
+          tox -- tests/api/test_routers.py::test_router_marker
+
+      - name: Test with tox - marker inference
+        working-directory: ${{ github.workspace }}
+        run: |
+          tox -- tests/api/test_routers.py::test_inference_marker
 
       - name: Disk Usage - pre-teardown
         run: |

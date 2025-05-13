@@ -137,7 +137,7 @@ env_list = [
 ]
 env_run_base = {commands = [
     [
-        "pytest",
+        "pytest", "{posargs}",
     ],
 ], extras = [
     "test",
