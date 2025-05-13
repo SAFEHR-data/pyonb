@@ -20,10 +20,9 @@ classifiers = [
 ]
 dependencies = [
     "fastapi[standard]>=0.115.12",
-    "marker-pdf[full]==1.6.2",
-    "opencv-python>=4.11.0.86",
     "pytest-cov>=6.0.0",
     "pytest>=8.3.4",
+    "requests>=2.32",
     "tox>=4.24.1",
     "types-requests>=2.32.0.20250328",
 ]
@@ -36,7 +35,9 @@ keywords = [
 name = "pyonb"
 optional-dependencies = {dev = [
     "build",
+    "marker-pdf[full]==1.6.2",
     "mypy",
+    "opencv-python>=4.11.0.86",
     "pre-commit",
     "ruff",
     "tox",
