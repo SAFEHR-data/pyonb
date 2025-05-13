@@ -118,17 +118,8 @@ jobs:
       - name: Test with tox - test_local_start_api_and_healthy
         working-directory: ${{ github.workspace }}
         run: |
-          tox -- tests/api/test_app.py::test_local_start_api_and_healthy
-
-      - name: Test with tox - marker healthcheck
-        working-directory: ${{ github.workspace }}
-        run: |
-          tox -- tests/api/test_routers.py::test_router_marker
-
-      - name: Test with tox - marker inference
-        working-directory: ${{ github.workspace }}
-        run: |
-          tox -- tests/api/test_routers.py::test_inference_marker
+          export HOST_DATA_FOLDER="${GITHUB_WORKSPACE}/tests/data/single_synthetic_doc"
+          tox -- tests/api/test_app.py::test_local_start_api_and_healthy tests/api/test_routers.py::test_router_marker tests/api/test_routers.py::test_inference_marker
 
       - name: Disk Usage - pre-teardown
         run: |
