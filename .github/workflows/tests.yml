@@ -52,7 +52,7 @@ jobs:
         run: |
           uv venv
           source ./.venv/bin/activate
-          uv sync
+          uv sync --no-cache
 
       - name: Disk Usage - uv
         run: |
@@ -65,8 +65,11 @@ jobs:
           echo "/home/runner usage:"
           du -sh /home/runner/*
           echo ""
-          echo ".venv usage: "
+          echo ".venv usage:"
           du -sh .venv
+          echo ""
+          echo ".venv/* usage:"
+          du -sh .venv/* | sort -hr | head -20
 
       - name: Add .venv to PATH
         run: |
