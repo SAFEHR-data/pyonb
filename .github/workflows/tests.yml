@@ -135,4 +135,4 @@ jobs:
         working-directory: ${{ github.workspace }}
         if: always()
         run: |
-          docker compose --profile marker --rmi all --volumes --remove-orphans
+          docker compose --profile marker down --rmi all --volumes --remove-orphans
