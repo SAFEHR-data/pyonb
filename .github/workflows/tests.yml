@@ -65,7 +65,7 @@ jobs:
           echo "/home/runner usage:"
           du -sh /home/runner/*
           echo ""
-          echo ".venv usage:"
+          echo ".venv usage: "
           du -sh .venv
 
       - name: Add .venv to PATH
