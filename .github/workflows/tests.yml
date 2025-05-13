@@ -69,7 +69,7 @@ jobs:
           du -sh .venv
           echo ""
           echo ".venv/* usage:"
-          du -sh .venv/lib/* | sort -hr | head -20
+          du -sh .venv/lib/python3.12/site-packages | sort -hr | head -20
 
       - name: Add .venv to PATH
         run: |
