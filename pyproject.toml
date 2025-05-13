@@ -136,10 +136,7 @@ env_list = [
     "py313",
 ]
 env_run_base = {commands = [
-    [
-        "pytest",
-        "{posargs}",
-    ],
+    ["pytest", {default = ["tests"], extend = true, replace = "posargs"}],
 ], extras = [
     "test",
 ]}
