@@ -43,6 +43,21 @@ jobs:
           source ./.venv/bin/activate
           uv sync
 
+      - name: Show .venv size
+        run: |
+          du -sh .venv
+
+      - name: uv - check disk usage
+        run: |
+          echo "Disk usage summary:"
+          df -h
+          echo ""
+          echo "Workspace usage:"
+          du -sh $GITHUB_WORKSPACE/*
+          echo ""
+          echo "/home/runner usage:"
+          du -sh /home/runner/*
+
       - name: Add .venv to PATH
         run: |
           echo "${{ github.workspace }}/.venv/bin" >> $GITHUB_PATH
@@ -67,6 +82,17 @@ jobs:
         run: |
           docker compose --profile marker up -d ocr-forwarding-api
 
+      - name: Docker services - check disk usage
+        run: |
+          echo "Disk usage summary:"
+          df -h
+          echo ""
+          echo "Workspace usage:"
+          du -sh $GITHUB_WORKSPACE/*
+          echo ""
+          echo "/home/runner usage:"
+          du -sh /home/runner/*
+
       - name: Wait for services to be healthy
         run: |
           docker compose ps
@@ -80,8 +106,28 @@ jobs:
         run: |
           tox run
 
+      - name: Pre-teardown - check disk usage
+        run: |
+          echo "Disk usage summary:"
+          df -h
+          echo ""
+          echo "Workspace usage:"
+          du -sh $GITHUB_WORKSPACE/*
+          echo ""
+          echo "/home/runner usage:"
+          du -sh /home/runner/*
+
       - name: Tear down services
         working-directory: ${{ github.workspace }}
         if: always()
         run: |
           docker compose --profile marker --rmi all --volumes --remove-orphans
+
+  debug-space:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          df -h
+          du -sh /home/runner/*
+          docker system df -v
