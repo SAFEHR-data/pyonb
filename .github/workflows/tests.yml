@@ -96,7 +96,7 @@ jobs:
         run: |
           docker compose --profile marker up -d
         env:
-            HOST_DATA_FOLDER: ${{ github.workspace }}/tests/data/single_synthetic_doc
+          HOST_DATA_FOLDER: ${{ github.workspace }}/tests/data/single_synthetic_doc
 
       - name: Wait for services to be healthy
         run: |
