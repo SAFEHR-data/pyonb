@@ -118,16 +118,17 @@ jobs:
       - name: Test with tox
         working-directory: ${{ github.workspace }}
         run: |
-          export HOST_DATA_FOLDER="${GITHUB_WORKSPACE}/tests/data/single_synthetic_doc"
           echo ""
-          echo "HOST_DATA_FOLDER:"
-          echo $HOST_DATA_FOLDER
+          echo "HOST_DATA_FOLDER: $HOST_DATA_FOLDER"
+          echo ""
 
           tox -- \
             tests/api/test_app.py::test_local_start_api_and_healthy \
             tests/api/test_app.py::test_data_folder_contents \
             tests/api/test_routers.py::test_router_marker \
             tests/api/test_routers.py::test_inference_marker
+        env:
+            HOST_DATA_FOLDER: ${{ github.workspace }}/tests/data/single_synthetic_doc
 
       - name: Tear down services
         working-directory: ${{ github.workspace }}
