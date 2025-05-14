@@ -93,8 +93,9 @@ jobs:
       - name: Start Docker services
         working-directory: ${{ github.workspace }}
         run: |
-          docker compose --profile marker up -d ocr-forwarding-api
-          docker compose --profile marker up -d marker
+          docker compose --profile marker up -d
+        env:
+            HOST_DATA_FOLDER: ${{ github.workspace }}/tests/data/single_synthetic_doc
 
       - name: Wait for services to be healthy
         run: |
@@ -127,8 +128,6 @@ jobs:
             tests/api/test_app.py::test_data_folder_contents \
             tests/api/test_routers.py::test_router_marker \
             tests/api/test_routers.py::test_inference_marker
-        env:
-            HOST_DATA_FOLDER: ${{ github.workspace }}/tests/data/single_synthetic_doc
 
       - name: Tear down services
         working-directory: ${{ github.workspace }}
