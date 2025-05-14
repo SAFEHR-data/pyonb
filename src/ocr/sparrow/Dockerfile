@@ -1,7 +1,7 @@
 FROM python:3.10.4
 
 RUN apt-get update \
-    && apt-get install -y git ffmpeg libsm6 libxext6 poppler-utils libpoppler-cpp-dev
+    && apt-get install -y curl git ffmpeg libsm6 libxext6 poppler-utils libpoppler-cpp-dev
 
 # Clone Sparrow repo
 RUN git clone https://github.com/katanaml/sparrow.git /app
