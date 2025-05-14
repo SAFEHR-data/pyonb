@@ -29,7 +29,7 @@ async def hello(use_gpu: bool = False):
         logger.error(e, exc_info=True)
         raise HTTPException(status_code=500, detail=repr(e))
 
-def inference(url, ocr_model_version: str = None, ocr_model_lang: str = None):
+def inference(url, ocr_version: str = None, lang: str = None):
     if is_docker:
         logger.info(f"Detected running inside Docker container.")
         DATA_FOLDER = os.environ.get("CONTAINER_DATA_FOLDER")
@@ -50,8 +50,7 @@ def inference(url, ocr_model_version: str = None, ocr_model_lang: str = None):
             try:
                 response = requests.post(url,
                                          files={"file": (filename , pdf_file, "application/pdf")},
-                                         data={"ocr_model_version": ocr_model_version,
-                                               "ocr_model_lang": ocr_model_lang })
+                                         data={"ocr_version": ocr_version, "lang": lang })
             except Exception as e:
                 logger.error(e, exc_info=True)
                 raise HTTPException(status_code=500, detail=repr(e))
@@ -72,16 +71,17 @@ def inference(url, ocr_model_version: str = None, ocr_model_lang: str = None):
 
 
 @router.post("/paddleocr/inference")
-async def gpu_inference(use_gpu: bool = False, ocr_model_version: str = None, ocr_model_lang: str = None):
+async def gpu_inference(use_gpu: bool = False, model_version: str = None, model_lang: str = None):
     logger.info("[POST] /paddleocr/inference")
     logger.debug("use_gpu :" + str(use_gpu))
-    logger.debug("ocr_model_version :" + str(ocr_model_version))
-    logger.debug("ocr_model_lang" + str(ocr_model_lang))
+    logger.debug("model_version :" + str(model_version))
+    logger.debug("model_lang" + str(model_lang))
+
     if use_gpu:
         url= f"http://paddleocr-gpu:8000/inference"
     else:
         url= f"http://paddleocr-cpu:8000/inference"
-    return inference(url, ocr_model_version, ocr_model_lang)
+    return inference(url, model_version, model_lang)
 
 
 

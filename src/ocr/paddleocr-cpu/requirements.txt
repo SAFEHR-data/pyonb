@@ -6,6 +6,6 @@ python-multipart
 requests
 fastapi==0.111.0
 uvicorn[standard]
-paddleocr
+paddleocr==2.10.0
 cmake
 python-poppler
