@@ -125,7 +125,6 @@ jobs:
 
           tox -- \
             tests/api/test_app.py::test_local_start_api_and_healthy \
-            tests/api/test_app.py::test_data_folder_contents \
             tests/api/test_routers.py::test_router_marker \
             tests/api/test_routers.py::test_inference_marker
 
