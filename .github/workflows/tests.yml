@@ -14,6 +14,7 @@ jobs:
 
     env:
       PYTHON_ENV: test
+      HOST_DATA_FOLDER: ${{ github.workspace }}/tests/data/single_synthetic_doc
 
     services:
       docker:
@@ -121,7 +122,6 @@ jobs:
         run: |
           echo ""
           echo "HOST_DATA_FOLDER: $HOST_DATA_FOLDER"
-          echo ""
 
           tox -- \
             tests/api/test_app.py::test_local_start_api_and_healthy \
