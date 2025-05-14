@@ -1,8 +1,8 @@
 ---
 name: Dev Issue
 description: Create a new issue or task for pyonb
-projects: [ "SAFEHR-data/35" ]
-labels: [ "design" ]
+projects: ["SAFEHR-data/35"]
+labels: ["design"]
 body:
   - type: markdown
     attributes:

@@ -1,21 +1,29 @@
+"""Marker OCR runner."""
+
+import logging
 import sys
+from pathlib import Path
+
 from marker.config.parser import ConfigParser
 from marker.converters.pdf import PdfConverter
 from marker.models import create_model_dict
 from marker.output import text_from_rendered
 
+logger = logging.getLogger()
 
-# Initialize PDF converter object
-def setup_converter(config, config_parser):
+
+def setup_converter(config, config_parser) -> PdfConverter:  # noqa: ANN001
+    """Initialize PDF converter object."""
     artifact_dict = create_model_dict()
-    converter = PdfConverter(artifact_dict=artifact_dict, config=config, llm_service=config_parser.get_llm_service())
-    return converter
+    return PdfConverter(
+        artifact_dict=artifact_dict,
+        config=config,
+        llm_service=config_parser.get_llm_service(),
+    )
 
 
-def convert_pdf_to_markdown(file_path, output_format="markdown", use_llm=True):
-    """
-    Convert the PDF to markdown using Marker and optionally use LLM for improved accuracy.
-    """
+def convert_pdf_to_markdown(file_path: str | Path, output_format: str | Path = "markdown", use_llm: bool = True):  # noqa: ANN201
+    """Convert the PDF to markdown using Marker and optionally use LLM for improved accuracy."""
     try:
         # Optionally enable LLM for improved accuracy
         config = {
@@ -28,46 +36,41 @@ def convert_pdf_to_markdown(file_path, output_format="markdown", use_llm=True):
         config_parser = ConfigParser(config)
         # Create the converter with the necessary settings
         converter = setup_converter(config_parser.generate_config_dict(), config_parser)
-        
+
         # Process the PDF file and convert to the specified output format
-        rendered = converter(file_path)
-        
+        rendered = converter(str(file_path))
+
         # Extract the text (Markdown, JSON, or HTML) from the rendered object
         text, _, images = text_from_rendered(rendered)
-
+    except Exception:
+        logger.exception("Error processing PDF.")
+    else:
         return text, images
-    
-    except Exception as e:
-        print(f"Error processing PDF: {e}")
 
-def run_marker(input_pdf_path):
-    """
-    Execute marker.
-    """
-    res, images = convert_pdf_to_markdown(
-        file_path=input_pdf_path,
-        use_llm=True,
-        output_format="json"
-        )
-    
+
+def run_marker(input_pdf_path: str | Path):  # noqa: ANN201
+    """Execute marker."""
+    res, images = convert_pdf_to_markdown(file_path=input_pdf_path, use_llm=True, output_format="json")
+
     return res, images
 
+
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python main.py <input_pdf_path> <output_txt_path>")
+    if len(sys.argv) != 3:  # noqa: PLR2004
+        logger.exception("Usage: python main.py <input_pdf_path> <output_txt_path>")
         sys.exit(1)
 
-    # TODO: more robust file pathing - Python and Docker
-    input_pdf_path = sys.argv[1]
-    output_txt_path = sys.argv[2]
+    # TODO(tom): more robust file pathing - Python and Docker
+    input_pdf_path = Path(sys.argv[1])
+    output_txt_path = Path(sys.argv[2])
 
     res, images = run_marker(input_pdf_path)
 
     try:
-        with open(output_txt_path, "w", encoding="utf-8") as f:
+        with output_txt_path.open("w", encoding="utf-8") as f:
             f.write(res)
 
-        print(f"Text extracted to {output_txt_path}")
-    
-    except Exception as e:
-        print(f"Error writing OCR output to textfile: {e}")
+        logger.info("Text extracted to %s", output_txt_path)
+
+    except Exception:
+        logger.exception("Error writing OCR output to textfile.")

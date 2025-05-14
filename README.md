@@ -1,7 +1,7 @@
-> [!WARNING]  
-> This repo is under construction.
-
 # pyonb
+
+> [!WARNING]
+> This repo is under construction.
 
 <!--COMMENT OUT
 
@@ -13,22 +13,14 @@
 
 END COMMENT OUT-->
 
-<!-- prettier-ignore-start -->
-[tests-badge]:              https://github.com/SAFEHR-data/pyonb/actions/workflows/tests.yml/badge.svg
-[tests-link]:               https://github.com/SAFEHR-data/pyonb/actions/workflows/tests.yml
-[linting-badge]:            https://github.com/SAFEHR-data/pyonb/actions/workflows/linting.yml/badge.svg
-[linting-link]:             https://github.com/SAFEHR-data/pyonb/actions/workflows/linting.yml
-[documentation-badge]:      https://github.com/SAFEHR-data/pyonb/actions/workflows/docs.yml/badge.svg
-[documentation-link]:       https://github.com/SAFEHR-data/pyonb/actions/workflows/docs.yml
-[license-badge]:            https://img.shields.io/badge/License-MIT-yellow.svg
-<!-- prettier-ignore-end -->
+**pyonb** is two things:
 
-- Python SDK for OnBase REST API (eventually)
-- Optical Character Recognition (OCR) API for converting PDFs to structured text
-- Planned OCR tool compatibility:
-   - marker
-   - docling
-   - sparrow
+- a Python SDK for document extraction via the Hyland OnBase REST API (_work in progress_)
+- a suite of APIs wrapped around open-source Optical Character Recognition (OCR) tools, designed for local deployment, for converting PDFs to structured text including:
+  - [Marker](https://github.com/VikParuchuri/marker)
+  - [Sparrow](https://github.com/katanaml/sparrow)
+  - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
+  - [Docling](https://github.com/docling-project/docling)
 
 ## Getting Started
 
@@ -43,7 +35,10 @@ END COMMENT OUT-->
 2. Edit `.env` with the correct `HOST_DATA_FOLDER` location, e.g.:
 
 ```sh
-HOST_DATA_FOLDER="/absolute/path/to/pyonb/src/ocr/tests/synthetic_docs"
+HOST_DATA_FOLDER="/absolute/path/to/documents/folder"
+
+# e.g. for unit tests on GAE:
+# HOST_DATA_FOLDER="/gae/pyonb/tests/data/single_synthetic_doc"
 ```
 
 4. Set OCR service ports, e.g.:
@@ -54,8 +49,9 @@ SPARROW_API_PORT=8001
 MARKER_API_PORT=8002
 ```
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > For GAE usage, set OCR service ports and UCLH proxy details:
+>
 > ```sh
 > http_proxy=
 > https_proxy=
@@ -69,90 +65,60 @@ MARKER_API_PORT=8002
 docker compose --profile sparrow --profile marker up -d
 ```
 
-6. Open FastAPI Swagger at http://127.0.0.1:8080/docs to view and execute endpoints.
+6. Open FastAPI Swagger at <http://127.0.0.1:8080/docs> to view and execute endpoints.
 
 The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_DATA_FOLDER`:
+
 - **sparrow** - POST `sparrow-ocr/inference`
 - **marker** - POST `marker/inference`
 
 7. View the JSON response:
 
-<center><img src="docs/ocr-json-response-example.png" alt="OCR Server JSON response" width="75%"/></center>
+|                                                                 |
+| :-------------------------------------------------------------: |
+| ![OCR Server JSON response](docs/ocr-json-response-example.png) |
 
-### Developer Tips:
+<!-- <div style="text-align:center;"></center> -->
+
+### Developer Tips
+
 - Alternatively to Swagger, use [Postman](https://www.postman.com/) to construct, save and make your API requests.
 
+## Tests
 
-
-<!--COMMENT OUT 
-We recommend installing in a project specific virtual environment created using
-a environment management tool such as
-[Conda](https://docs.conda.io/projects/conda/en/stable/). To install the latest
-development version of `pyonb` using `pip` in the currently active
-environment run
-
-```sh
-pip install git+https://github.com/SAFEHR-data/pyonb.git
-```
-
-Alternatively create a local clone of the repository with
+1. Clone the repo:
 
 ```sh
 git clone https://github.com/SAFEHR-data/pyonb.git
 ```
 
-and then install in editable mode by running
+2. Create a virtual environment ([we suggest using uv](https://docs.astral.sh/uv/pip/environments/)) and install dependencies:
 
 ```sh
-pip install -e .
+uv venv --python3.12
+source .venv/bin/activate
+uv sync
 ```
 
-### Running Locally
-
-How to run the application on your local system.
-
-### Running Tests
-
-END COMMENT OUT-->
-
-<!-- How to run tests on your local system. -->
-
-<!--COMMENT OUT 
-
-Tests can be run across all compatible Python versions in isolated environments
-using [`tox`](https://tox.wiki/en/latest/) by running
+3. Copy the `tests/` .env file to root directory to use with tox:
 
 ```sh
-tox
+cp /tests/.env.tests .env
 ```
 
-To run tests manually in a Python environment with `pytest` installed run
+4. Start the Docker services:
 
 ```sh
-pytest tests
+docker compose --profile sparrow --profile marker up -d
 ```
 
-again from the root of the repository.
-
-### Building Documentation
-
-The MkDocs HTML documentation can be built locally by running
+5. Run tests using tox:
 
 ```sh
-tox -e docs
+tox -e py312
 ```
 
-from the root of the repository. The built documentation will be written to
-`site`.
-
-Alternatively to build and preview the documentation locally, in a Python
-environment with the optional `docs` dependencies installed, run
-
-```sh
-mkdocs serve
-```
-
-END COMMENT OUT-->
+NB: this may take a few minutes to perform the inference tests.
 
 ## About
 
@@ -162,6 +128,10 @@ END COMMENT OUT-->
 - Tom Roberts ([tom.roberts@ucl.ac.uk](mailto:tom.roberts@ucl.ac.uk))
 - Kawsar Noor
 - Lawrence Lai
+- Stefan Piatek
+- Richard Dobson
+- Steve Harris
+- Sarah Keating
 
 ## Acknowledgements
 
