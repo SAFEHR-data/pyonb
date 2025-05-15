@@ -164,3 +164,6 @@ _version.py
 
 # MacOS
 .DS_Store
+
+# Downloaded OCR Models
+models/
