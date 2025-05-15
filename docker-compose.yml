@@ -99,6 +99,7 @@ services:
       - "${MARKER_API_PORT}:${MARKER_API_PORT}"
     volumes:
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+      - ${HOST_MARKER_MODELS_DOWNLOAD_FOLDER}:${CONTAINER_MARKER_MODELS_DOWNLOAD_FOLDER:-$HOME/.cache/datalab/models}
     networks:
       - pyonb_ocr_api
     healthcheck:
