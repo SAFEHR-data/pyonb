@@ -21,7 +21,6 @@ else:
     raise NameError(e)
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 # Detect if in Docker container
 is_docker = Path("/.dockerenv").exists()
