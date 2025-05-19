@@ -19,8 +19,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "marker-pdf[full]==1.6.2",
+    "fastapi[standard]>=0.115.12",
+    "pytest-cov>=6.0.0",
     "pytest>=8.3.4",
+    "requests>=2.32",
+    "tox>=4.24.1",
+    "types-requests>=2.32.0.20250328",
 ]
 description = "Python SDK for OnBase REST API"
 dynamic = [
@@ -31,7 +35,9 @@ keywords = [
 name = "pyonb"
 optional-dependencies = {dev = [
     "build",
+    "marker-pdf[full]==1.6.2",
     "mypy",
+    "opencv-python>=4.11.0.86",
     "pre-commit",
     "ruff",
     "tox",
@@ -77,13 +83,23 @@ testpaths = [
 [tool.ruff]
 fix = true
 force-exclude = true
+line-length = 120
 lint.ignore = [
     "COM812", # trailing commas (ruff-format recommended)
     "D203", # no-blank-line-before-class
     "D212", # multi-line-summary-first-line
+    "D401", # imperative mood docstrings
     "D407", # removed dashes lines under sections
     "D417", # argument description in docstring (unreliable)
+    "FBT001", # bool args
+    "FBT002", # bool args
+    "FIX002", # TODOs
     "ISC001", # simplify implicit str concatenation (ruff-format recommended)
+    "N806", # lowercase vars
+    "PTH113", # pathlib
+    "S603", # subprocess
+    "S607", # partial pathing for processes
+    "TD003", # TODOs
 ]
 lint.per-file-ignores = {"tests*" = [
     "INP001", # File is part of an implicit namespace package.
@@ -120,18 +136,12 @@ env_list = [
     "py313",
 ]
 env_run_base = {commands = [
-    [
-        "pytest",
-        "--cov",
-        "--cov-report=xml",
-    ],
+    ["pytest", {default = ["tests"], extend = true, replace = "posargs"}],
 ], extras = [
     "test",
 ]}
 env.docs = {commands = [
-    "mkdocs",
-    "build",
-    "--strict",
+    ["mkdocs", "build", "--strict"],
 ], extras = [
     "docs",
 ]}

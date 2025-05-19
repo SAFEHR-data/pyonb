@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.7.1
+    rev: v0.11.7
     hooks:
       - id: ruff
       - id: ruff-format
@@ -19,9 +19,11 @@ repos:
     hooks:
       - id: toml-sort-fix
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.4.1
     hooks:
       - id: mypy
+        additional_dependencies:
+          - types-requests
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.1.0
     hooks:
@@ -41,11 +43,11 @@ repos:
           - --fix=lf
       - id: trailing-whitespace
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.29.4
+    rev: 0.33.0
     hooks:
       # Schemas taken from https://www.schemastore.org/json/
       - id: check-jsonschema
         name: "Validate GitHub issue templates"
         files: ^\.github/ISSUE_TEMPLATE/.*\.yml$
-        exclude: ^\.github/ISSUE_TEMPLATE/config\.yml$
+        exclude: ^\.github/ISSUE_TEMPLATE/config|new_issue\.yml$
         args: ["--verbose", "--schemafile", "schemas/github-issue-forms.json"]
