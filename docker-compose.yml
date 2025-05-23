@@ -128,7 +128,7 @@ services:
     env_file:
       - ./.env
     ports:
-      - "8003:8000"
+      - "${PADDLEOCR_API_PORT}:${PADDLEOCR_API_PORT}"
     volumes:
       - ./src/ocr/paddleocr/app:/app
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
