@@ -71,16 +71,13 @@ def inference(url, ocr_version: str = None, lang: str = None):
 
 
 @router.post("/paddleocr/inference")
-async def gpu_inference(use_gpu: bool = False, model_version: str = None, model_lang: str = None):
+async def gpu_inference(model_version: str = None, model_lang: str = None):
     logger.info("[POST] /paddleocr/inference")
-    logger.debug("use_gpu :" + str(use_gpu))
     logger.debug("model_version :" + str(model_version))
     logger.debug("model_lang" + str(model_lang))
 
-    if use_gpu:
-        url= f"http://paddleocr-gpu:8000/inference"
-    else:
-        url= f"http://paddleocr-cpu:8000/inference"
+    url= f"http://paddleocr-cpu:8000/inference"
+
     return inference(url, model_version, model_lang)
 
 

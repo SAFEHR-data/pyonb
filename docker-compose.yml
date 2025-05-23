@@ -135,33 +135,6 @@ services:
     networks:
       - pyonb_ocr_api
 
-  paddleocr-gpu:
-    profiles: [ paddleocr-gpu ]
-    build:
-      context: src/ocr/paddleocr-gpu
-      dockerfile: Dockerfile
-      args:
-        <<: *build-args-common
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu ]
-    environment:
-      <<: [ *proxy-common, *common-env ]
-      CONTAINER_DATA_FOLDER: /data
-    env_file:
-      - ./src/api/.env
-    ports:
-      - "8004:8000"
-    volumes:
-      - ./src/ocr/paddleocr-gpu/app:/app
-      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
-    networks:
-      - pyonb_ocr_api
-
   ocr-forwarding-api:
     build:
       context: src/api
