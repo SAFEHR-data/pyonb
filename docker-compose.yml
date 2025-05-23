@@ -115,10 +115,10 @@ services:
       retries: 3
       start_period: 30s
 
-  paddleocr-cpu:
-    profiles: [ paddleocr-cpu ]
+  paddleocr:
+    profiles: [ paddleocr ]
     build:
-      context: src/ocr/paddleocr-cpu
+      context: src/ocr/paddleocr
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
@@ -126,11 +126,11 @@ services:
       <<: [ *proxy-common, *common-env ]
       CONTAINER_DATA_FOLDER: /data
     env_file:
-      - ./src/api/.env
+      - ./.env
     ports:
       - "8003:8000"
     volumes:
-      - ./src/ocr/paddleocr-cpu/app:/app
+      - ./src/ocr/paddleocr/app:/app
       - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
     networks:
       - pyonb_ocr_api

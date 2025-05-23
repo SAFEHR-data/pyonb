@@ -76,7 +76,7 @@ async def gpu_inference(model_version: str = None, model_lang: str = None):
     logger.debug("model_version :" + str(model_version))
     logger.debug("model_lang" + str(model_lang))
 
-    url= f"http://paddleocr-cpu:8000/inference"
+    url= f"http://paddleocr:8000/inference"
 
     return inference(url, model_version, model_lang)
 
