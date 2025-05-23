@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 
 import uvicorn
 from fastapi import FastAPI, status
@@ -27,8 +28,7 @@ async def health_check():
     Returns 200 OK status if API is running properly.
     """
     logger.info("[GET] /health")
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"service": "paddleocr-cpu", "status": "healthy"})
-
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"service": "paddleocr", "status": "healthy"})
 
 if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("api:app", host="0.0.0.0", port=int(os.environ.get('PADDLEOCR_API_PORT')), reload=True)

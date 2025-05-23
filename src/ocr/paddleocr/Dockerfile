@@ -1,15 +1,14 @@
 FROM paddlepaddle/paddle:3.0.0
 
-WORKDIR /app
-RUN chmod -R u+x /app
-
-COPY app/api.py requirements.txt ./
+COPY . /
+COPY requirements.txt /app
 
 RUN apt-get update \
     && apt-get install -y curl build-essential ffmpeg libsm6 libxext6 poppler-utils libpoppler-cpp-dev pkg-config
 
-RUN pip install --upgrade pip
+RUN pip install -U pip
+RUN pip install -r /app/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
 CMD ["python", "api.py"]
