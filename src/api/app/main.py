@@ -23,11 +23,6 @@ app.include_router(sparrow.router)
 app.include_router(marker.router)
 app.include_router(paddleocr.router)
 
-
-# Creating an object
-logger = logging.getLogger()
-
-
 @app.get("/")
 async def health_check() -> JSONResponse:
     """
