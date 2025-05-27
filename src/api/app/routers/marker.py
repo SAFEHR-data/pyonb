@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
+from api.app.util import check_data_folder
+
 load_dotenv()
 
 if os.getenv("MARKER_API_PORT"):
@@ -22,9 +24,6 @@ else:
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
-# Detect if in Docker container
-is_docker = Path("/.dockerenv").exists()
 
 router = APIRouter()
 
@@ -47,21 +46,7 @@ async def inference() -> JSONResponse:
     # URL of marker service
     # TODO(tom): configure with env var (e.g. so can set 127.0.0.1 if running on host)
 
-    logger.info("HOST_DATA_FOLDER: %s", str(os.environ.get("HOST_DATA_FOLDER")))
-
-    if is_docker:
-        logger.info("Detected running inside Docker container.")
-        DATA_FOLDER = str(os.environ.get("CONTAINER_DATA_FOLDER"))
-    elif not is_docker:
-        logger.info("Detected running on host machine.")
-        DATA_FOLDER = str(os.environ.get("HOST_DATA_FOLDER"))
-
-    if Path(DATA_FOLDER).exists():
-        logger.info("DATA_FOLDER: %s", DATA_FOLDER)
-    else:
-        e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
-        logger.exception(NotADirectoryError(e))
-        raise NotADirectoryError(e)
+    DATA_FOLDER = check_data_folder()
 
     filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)

@@ -3,12 +3,13 @@
 import datetime
 import json
 import logging
-import os
 from pathlib import Path
 from typing import Any
 
 import requests
 from fastapi import APIRouter
+
+from api.app.util import check_data_folder
 
 # Creating an object
 logger = logging.getLogger()
@@ -37,21 +38,7 @@ async def inference() -> dict:
     logger.info("[POST] /sparrow-ocr/inference")
     url = "http://sparrow:8001/api/v1/sparrow-ocr/inference"  # fwd request to sparrow service
 
-    logger.info("HOST_DATA_FOLDER: %s", str(os.environ.get("HOST_DATA_FOLDER")))
-
-    if is_docker:
-        logger.info("Detected running inside Docker container.")
-        DATA_FOLDER = str(os.environ.get("CONTAINER_DATA_FOLDER"))
-    elif not is_docker:
-        logger.info("Detected running on host machine.")
-        DATA_FOLDER = str(os.environ.get("HOST_DATA_FOLDER"))
-
-    if Path(DATA_FOLDER).exists():
-        logger.info("DATA_FOLDER: %s", DATA_FOLDER)
-    else:
-        e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
-        logger.exception(NotADirectoryError(e))
-        raise NotADirectoryError(e)
+    DATA_FOLDER = check_data_folder()
 
     filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)
