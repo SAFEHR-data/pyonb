@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Annotated
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 logging.basicConfig(
     filename="marker." + datetime.datetime.now(tz=datetime.UTC).strftime("%Y%m%d") + ".log",
@@ -33,6 +33,10 @@ except Exception:
 app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
 
+@app.get("/", include_in_schema=False)
+async def root() -> RedirectResponse:
+    """Redirect localhost:<PORT> to Swagger at localhost:<PORT>/docs."""
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)
@@ -64,7 +68,7 @@ async def inference(file: Annotated[UploadFile, File()] = None) -> JSONResponse:
         if file.content_type == "application/pdf":
             try:
                 content = await file.read()
-                # marker requires path to file rather than UploadFile object
+                # marker requires path to file rather than UploadFile object, so create temp copy of file
                 with Path(f"temp_api_file_{file.filename}").open("wb") as f:  # noqa: ASYNC230
                     f.write(content)
                 result, _ = run_marker(f"temp_api_file_{file.filename}")
