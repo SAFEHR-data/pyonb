@@ -30,7 +30,9 @@ except Exception:
     except Exception:
         logger.exception("Marker imports not possible.")
 
-app = FastAPI()
+app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
+
+
 
 
 @app.get("/health", status_code=status.HTTP_200_OK)

@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-app = FastAPI()
+app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
 app.include_router(sparrow.router)
 app.include_router(marker.router)
