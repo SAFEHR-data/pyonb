@@ -5,10 +5,11 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import requests
-from fastapi import APIRouter
+from fastapi import APIRouter, File, UploadFile, status
+from fastapi.responses import JSONResponse
 
 # Creating an object
 logger = logging.getLogger()
@@ -46,13 +47,48 @@ def check_data_folder() -> Path | str:
 
 # nb: sparrow hard codes API port to 8001
 @router.get("/sparrow-ocr")
-async def hello() -> dict[str, Any]:
+async def healthcheck() -> dict[str, Any]:
     """Test aliveness endpoint for Sparrow."""
     logger.info("[GET] /sparrow")
     url = "http://sparrow:8001"
     response = requests.get(url, timeout=5)  # noqa: ASYNC210
 
     return json.loads(response.content.decode("utf-8"))
+
+
+@router.post("/sparrow-ocr/inference_single", status_code=status.HTTP_200_OK)
+async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None) -> JSONResponse:
+    """
+    Runs Sparrow OCR inference on a single document.
+
+    UploadFile object forwarded onto inference API.
+    """
+    logger.info("[POST] /sparrow-ocr/inference_single_doc")
+    url = "http://sparrow:8001/api/v1/sparrow-ocr/inference"  # fwd request to sparrow service
+
+    t1 = datetime.datetime.now(datetime.UTC)
+
+    file_bytes = await file_upload.read()
+    file = {"file": (file_upload.filename, file_bytes, file_upload.content_type)}
+    headers = {"accept": "application/json"}
+
+    logger.info("post request - url: %s", url)
+    logger.info("post request - file: %s", file)
+    logger.info("post request - headers: %s", headers)
+
+    # nb: timeout currently arbitrarily one hour
+    response = requests.post(url=url, files=file, headers=headers, timeout=60 * 60) # noqa: ASYNC210
+
+    t2 = datetime.datetime.now(datetime.UTC)
+    td = t2 - t1
+
+    response_json = {
+        "filename": str(file_upload.filename),
+        "duration_in_second": td.total_seconds(),
+        "ocr-result": response.text,
+    }
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
 
 
 @router.post("/sparrow-ocr/inference")
