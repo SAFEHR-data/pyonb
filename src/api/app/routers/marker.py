@@ -81,7 +81,7 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
     logger.info("post request - headers: %s", headers)
 
     # nb: timeout currently arbitrarily one hour
-    response = requests.post(url=url, files=file, headers=headers, timeout=60 * 60) # noqa: ASYNC210
+    response = requests.post(url=url, files=file, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
 
     t2 = datetime.datetime.now(datetime.UTC)
     td = t2 - t1
