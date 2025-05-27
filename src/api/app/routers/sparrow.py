@@ -92,8 +92,8 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
 
 
 @router.post("/sparrow-ocr/inference")
-async def inference() -> dict:
-    """Runs Sparrow OCR inference."""
+async def inference_folder() -> dict:
+    """Runs Sparrow OCR inference on multiple documents in a folder."""
     logger.info("[POST] /sparrow-ocr/inference")
     url = "http://sparrow:8001/api/v1/sparrow-ocr/inference"  # fwd request to sparrow service
 

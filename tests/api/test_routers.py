@@ -34,7 +34,7 @@ def test_inference_marker(ocr_forwarding_api_port: str) -> None:
     - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
 
     """
-    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference", timeout=60 * 60)
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference_folder", timeout=60 * 60)
     assert response.status_code == requests.codes.ok
     assert response.json()["total_duration_in_second"] > 0
     assert response.json()["result"][0]["filename"] in {
@@ -54,7 +54,7 @@ def test_inference_sparrow(ocr_forwarding_api_port: str) -> None:
     - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
 
     """
-    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference", timeout=60 * 60)
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference_folder", timeout=60 * 60)
     assert response.status_code == requests.codes.ok
     assert response.json()["total_duration_in_second"] > 0
     assert response.json()["result"][0]["filename"] in {
