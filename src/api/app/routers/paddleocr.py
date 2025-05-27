@@ -15,12 +15,9 @@ is_docker = os.path.exists('/.dockerenv')
 router = APIRouter()
 
 @router.get("/paddleocr")
-async def hello(use_gpu: bool = False):
-    logger.info("[GET] /paddleocr - gpu:" + str(use_gpu))
-    if use_gpu:
-        url= f"http://paddleocr-gpu:8000/health"
-    else:
-        url= f"http://paddleocr-cpu:8000/health"
+async def health():
+    logger.info("[GET] /paddleocr")
+    url= f"http://paddleocr:8000/health"
 
     try:
         response = requests.get(url)
@@ -71,7 +68,7 @@ def inference(url, ocr_version: str = None, lang: str = None):
 
 
 @router.post("/paddleocr/inference")
-async def gpu_inference(model_version: str = None, model_lang: str = None):
+async def inference(model_version: str = None, model_lang: str = None):
     logger.info("[POST] /paddleocr/inference")
     logger.debug("model_version :" + str(model_version))
     logger.debug("model_lang" + str(model_lang))
