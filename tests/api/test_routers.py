@@ -25,9 +25,9 @@ def test_router_sparrow(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"message": "Sparrow OCR API"}
 
 
-def test_inference_marker(ocr_forwarding_api_port: str) -> None:
+def test_inference_on_folder_marker(ocr_forwarding_api_port: str) -> None:
     """
-    Test PDF conversion using marker.
+    Test PDF conversion using marker pointed at a folder of files.
 
     Note:
     - may take ~minutes to perform inference
@@ -45,9 +45,9 @@ def test_inference_marker(ocr_forwarding_api_port: str) -> None:
     }
 
 
-def test_inference_sparrow(ocr_forwarding_api_port: str) -> None:
+def test_inference_on_folder_sparrow(ocr_forwarding_api_port: str) -> None:
     """
-    Test PDF conversion using sparrow.
+    Test PDF conversion using sparrow pointed at a folder of files.
 
     Note:
     - may take ~minutes to perform inference
