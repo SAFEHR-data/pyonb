@@ -1,86 +1,104 @@
-import json
-import os
+"""Routers for Paddle OCR."""
 
-from fastapi import APIRouter, HTTPException
-import datetime
+import json
 import logging
+import os
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+
 import requests
+from dotenv import load_dotenv
+from fastapi import APIRouter, HTTPException
+
+load_dotenv()
+
+if os.getenv("PADDLEOCR_API_PORT"):
+    PADDLEOCR_API_PORT = os.getenv("PADDLEOCR_API_PORT")
+else:
+    e = "PADDLEOCR_API_PORT environment variable not found."
+    raise NameError(e)
 
 # Creating an object
 logger = logging.getLogger()
 
 # Detect if in Docker container
-is_docker = os.path.exists('/.dockerenv')
+is_docker = Path("/.dockerenv").exists()
 
 router = APIRouter()
 
-@router.get("/paddleocr")
-async def health():
-    logger.info("[GET] /paddleocr")
-    url= f"http://paddleocr:8000/health"
+
+@router.get("/paddleocr/health")
+async def health_check() -> dict[str, Any]:
+    """
+    Health check endpoint to verify API is accessible.
+
+    Returns 200 OK status if API is running properly.
+    """
+    logger.info("[GET] /paddleocr/health")
+    url = f"http://paddleocr:{PADDLEOCR_API_PORT}/health"
 
     try:
-        response = requests.get(url)
-        return json.loads(response.content.decode('utf-8'))
+        response = requests.get(url, timeout=5)  # noqa: ASYNC210
+        return json.loads(response.content.decode("utf-8"))
     except Exception as e:
-        logger.error(e, exc_info=True)
-        raise HTTPException(status_code=500, detail=repr(e))
-
-def inference(url, ocr_version: str = None, lang: str = None):
-    if is_docker:
-        logger.info(f"Detected running inside Docker container.")
-        DATA_FOLDER = os.environ.get("CONTAINER_DATA_FOLDER")
-    elif not is_docker:
-        logger.info(f"Detected running on host machine.")
-        DATA_FOLDER = os.environ.get("HOST_DATA_FOLDER")
-    logger.info(f"DATA_FOLDER: {DATA_FOLDER}")
-
-    filenames = [f for f in os.listdir(DATA_FOLDER) if f.endswith(".pdf")]
-    logger.info(f"Filenames in {DATA_FOLDER}: {filenames}")
-
-    ocr_result = []
-    t1 = datetime.datetime.now()
-    for filename in filenames:
-        with open(os.path.join(DATA_FOLDER, filename), "rb") as pdf_file:
-            # Send the file via POST request
-            s1 = datetime.datetime.now()
-            try:
-                response = requests.post(url,
-                                         files={"file": (filename , pdf_file, "application/pdf")},
-                                         data={"ocr_version": ocr_version, "lang": lang })
-            except Exception as e:
-                logger.error(e, exc_info=True)
-                raise HTTPException(status_code=500, detail=repr(e))
-
-            s2 = datetime.datetime.now()
-            td = s2 - s1
-            response_entry = {'filename': filename,
-                              'duration_in_second': td.total_seconds(),
-                              'ocr-result': json.loads(response.content.decode('utf-8'))}
-            logger.info(f"Filename: {filename}")
-            logger.info(f"response_entry: {response_entry}")
-            ocr_result.append(response_entry)
-    t2 = datetime.datetime.now()
-    total_duration = t2 - t1
-    response_json = {"total_duration_in_second" : total_duration.total_seconds(),
-                     "result" : ocr_result}
-    return response_json
+        logger.exception("Connection exception when calling paddleocr")
+        raise HTTPException(status_code=500, detail=repr(e)) from e
 
 
 @router.post("/paddleocr/inference")
-async def inference(model_version: str = None, model_lang: str = None):
+async def inference(model_version: str | None = None, model_lang: str | None = None) -> dict[str, Any]:
+    """PaddleOCR inference API."""
     logger.info("[POST] /paddleocr/inference")
-    logger.debug("model_version :" + str(model_version))
-    logger.debug("model_lang" + str(model_lang))
+    logger.debug("model_version : %s", str(model_version))
+    logger.debug("model_lang : %s", str(model_lang))
+    url = f"http://paddleocr:{PADDLEOCR_API_PORT}/inference"
 
-    url= f"http://paddleocr:8000/inference"
+    if is_docker:
+        logger.info("Detected running inside Docker container.")
+        DATA_FOLDER = str(os.environ.get("CONTAINER_DATA_FOLDER"))
+    elif not is_docker:
+        logger.info("Detected running on host machine.")
+        DATA_FOLDER = str(os.environ.get("HOST_DATA_FOLDER"))
 
-    return inference(url, model_version, model_lang)
+    if Path(DATA_FOLDER).exists():
+        logger.info("DATA_FOLDER: %s", DATA_FOLDER)
+    else:
+        e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
+        logger.exception(NotADirectoryError(e))
+        raise NotADirectoryError(e)
 
+    filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
+    logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)
 
+    ocr_result = []
+    t1 = datetime.now(tz=UTC)
+    for filename in filenames:
+        abs_file_path = Path(DATA_FOLDER) / Path(filename)
+        logger.info("abs_file_path: %s", abs_file_path)
+        if not abs_file_path.exists():
+            e = f"{abs_file_path!s} file not found or does not exist."
+            logger.exception(FileNotFoundError(e))
+            raise FileNotFoundError(e)
 
+        with Path.open(abs_file_path, "rb") as pdf_file:
+            # Send the file via POST request
+            s1 = datetime.now(tz=UTC)
+            files = {"file": (str(filename), pdf_file, "application/pdf")}
+            data = {"model_version": model_version, "model_lang": model_lang}
+            response = requests.post(url, files=files, data=data, timeout=60 * 60)  # noqa: ASYNC210
 
+            s2 = datetime.now(tz=UTC)
+            td = s2 - s1
+            response_entry = {
+                "filename": filename,
+                "duration_in_second": td.total_seconds(),
+                "ocr-result": json.loads(response.content.decode("utf-8")),
+            }
+            logger.info("Filename: %s", filename)
+            logger.info("response_entry: %s", response_entry)
+            ocr_result.append(response_entry)
+    t2 = datetime.now(tz=UTC)
+    total_duration = t2 - t1
 
-
-
-
+    return {"total_duration_in_second": total_duration.total_seconds(), "result": ocr_result}
