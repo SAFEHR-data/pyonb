@@ -116,7 +116,7 @@ services:
       start_period: 30s
 
   paddleocr:
-    profiles: [ paddleocr ]
+    profiles: [paddleocr]
     build:
       context: src/ocr/paddleocr
       dockerfile: Dockerfile
@@ -124,7 +124,7 @@ services:
         <<: *build-args-common
         PADDLEOCR_API_PORT: ${PADDLEOCR_API_PORT}
     environment:
-      <<: [ *proxy-common, *common-env ]
+      <<: [*proxy-common, *common-env]
       CONTAINER_DATA_FOLDER: /data
       PADDLEOCR_API_PORT: ${PADDLEOCR_API_PORT}
     env_file:

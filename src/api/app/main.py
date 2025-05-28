@@ -6,7 +6,7 @@ import logging
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 
-from .routers import marker, sparrow, paddleocr
+from .routers import marker, paddleocr, sparrow
 
 logging.basicConfig(
     filename="pyonb-" + datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d") + ".log",
@@ -22,6 +22,7 @@ app = FastAPI()
 app.include_router(sparrow.router)
 app.include_router(marker.router)
 app.include_router(paddleocr.router)
+
 
 @app.get("/")
 async def health_check() -> JSONResponse:
