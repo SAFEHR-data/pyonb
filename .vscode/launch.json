@@ -43,6 +43,22 @@
       ],
       "jinja": true,
       "justMyCode": true
+    },
+    {
+      "name": "docling API launch",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "src.ocr.docling.api:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8115",
+        "--reload"
+      ],
+      "jinja": true,
+      "justMyCode": true
     }
   ]
 }
