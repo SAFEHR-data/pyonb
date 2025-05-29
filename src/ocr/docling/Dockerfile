@@ -17,6 +17,7 @@ ENV UV_SYSTEM_PYTHON=1
 COPY requirements.txt .
 RUN uv pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
+COPY main.py api.py ./
 
-ENTRYPOINT ["python", "main.py"]
+CMD uvicorn api:app --host 0.0.0.0 --port $DOCLING_API_PORT
+# ENTRYPOINT ["python", "main.py"]
