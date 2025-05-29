@@ -6,7 +6,7 @@ import logging
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from .routers import marker, sparrow, docling
+from .routers import docling, marker, sparrow
 
 logging.basicConfig(
     filename="pyonb-" + datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d") + ".log",
