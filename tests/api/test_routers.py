@@ -28,8 +28,7 @@ def test_router_sparrow(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"message": "Sparrow OCR API"}
 
 
-@pytest.mark.asyncio
-async def test_inference_single_file_upload_marker(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+def test_inference_single_file_upload_marker(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
     """Test PDF conversion using marker with single file endpoint."""
     url = f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference_single"
 
@@ -45,8 +44,7 @@ async def test_inference_single_file_upload_marker(ocr_forwarding_api_port: str,
     assert response.json()["filename"] in single_pdf_filename
 
 
-@pytest.mark.asyncio
-async def test_inference_single_file_upload_sparrow(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+def test_inference_single_file_upload_sparrow(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
     """Test PDF conversion using sparrow with single file endpoint."""
     url = f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference_single"
 
@@ -62,8 +60,7 @@ async def test_inference_single_file_upload_sparrow(ocr_forwarding_api_port: str
     assert response.json()["filename"] in single_pdf_filename
 
 
-@pytest.mark.asyncio
-async def test_inference_single_file_upload_docling(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+def test_inference_single_file_upload_docling(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
     """Test PDF conversion using Docling with single file endpoint."""
     url = f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/inference_single"
 
@@ -79,8 +76,7 @@ async def test_inference_single_file_upload_docling(ocr_forwarding_api_port: str
     assert response.json()["filename"] in single_pdf_filename
 
 
-@pytest.mark.asyncio
-async def test_inference_on_folder_marker(ocr_forwarding_api_port: str) -> None:
+def test_inference_on_folder_marker(ocr_forwarding_api_port: str) -> None:
     """
     Test PDF conversion using marker pointed at a folder of files.
 
@@ -100,8 +96,7 @@ async def test_inference_on_folder_marker(ocr_forwarding_api_port: str) -> None:
     }
 
 
-@pytest.mark.asyncio
-async def test_inference_on_folder_sparrow(ocr_forwarding_api_port: str) -> None:
+def test_inference_on_folder_sparrow(ocr_forwarding_api_port: str) -> None:
     """
     Test PDF conversion using sparrow pointed at a folder of files.
 
@@ -123,8 +118,7 @@ async def test_inference_on_folder_sparrow(ocr_forwarding_api_port: str) -> None
     }
 
 
-@pytest.mark.asyncio
-async def test_inference_on_folder_docling(ocr_forwarding_api_port: str) -> None:
+def test_inference_on_folder_docling(ocr_forwarding_api_port: str) -> None:
     """
     Test PDF conversion using Docling pointed at a folder of files.
 
@@ -133,9 +127,7 @@ async def test_inference_on_folder_docling(ocr_forwarding_api_port: str) -> None
     - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
 
     """
-    response = requests.post(
-        f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/inference_folder", timeout=60 * 60
-    )
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/inference_folder", timeout=60 * 60)
     assert response.status_code == requests.codes.ok
     assert response.json()["total_duration_in_second"] > 0
     assert response.json()["result"][0]["filename"] in {
