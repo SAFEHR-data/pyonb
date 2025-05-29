@@ -6,7 +6,6 @@ Test functions in /src/api/app/routers.
 
 from pathlib import Path
 
-import pytest
 import requests
 
 

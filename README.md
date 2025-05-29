@@ -119,7 +119,7 @@ docker compose --profile marker --profile docling up -d
 tox -e py312
 ```
 
-NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise. For example, with `--profile marker --profile docling` the Sparrow API will not be raised, 
+NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise. For example, with `--profile marker --profile docling` the Sparrow API will not be raised,
 so the associated tests will fail.
 
 To run unit tests individually, adapt the following:
