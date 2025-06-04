@@ -141,8 +141,8 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
-          "http://localhost:${PADDLEOCR_API_PORT}/",
+          "GET",
+          "http://localhost:${PADDLEOCR_API_PORT}/health",
         ]
       interval: 10s
       timeout: 3s
