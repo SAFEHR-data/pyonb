@@ -79,7 +79,7 @@ def invoke_ocr(doc_image: DocumentImage, ocr_version: str, lang: str) -> tuple[l
             from PIL import Image
 
             image = Image.open(bytes_img).convert("RGB")
-            im_show = draw_ocr(image, boxes, txts, scores, font_path="/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf")
+            im_show = draw_ocr(image, boxes, txts, scores, font_path="../fonts/DejaVuSerif.ttf")
             im_show = Image.fromarray(im_show)
             container_data_path = str(os.environ.get("CONTAINER_DATA_FOLDER"))
             output_dir_name = Path(container_data_path) / doc_image.name.split(".")[0]
