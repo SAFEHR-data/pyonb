@@ -2,7 +2,8 @@
 
 import logging
 import os
-from datetime import UTC, datetime
+import datetime
+from datetime import timezone
 
 import uvicorn
 from fastapi import FastAPI, status
@@ -10,7 +11,7 @@ from fastapi.responses import JSONResponse
 from routers import paddleocr
 
 logging.basicConfig(
-    filename=datetime.now(tz=UTC).strftime("%Y%m%d") + ".log",
+    filename=datetime.datetime.now(timezone.utc).strftime("%Y%m%d") + ".log",
     format="%(asctime)s %(message)s",
     filemode="a",
     level=logging.DEBUG,
