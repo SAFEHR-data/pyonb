@@ -85,9 +85,9 @@ async def inference_single_doc(
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
 
 
-@router.post("/paddleocr/inference")
-async def inference(model_version: str | None = None, model_lang: str | None = None) -> dict[str, Any]:
-    """PaddleOCR inference API."""
+@router.post("/paddleocr/inference_folder")
+async def inference_folder(model_version: str | None = None, model_lang: str | None = None) -> dict[str, Any]:
+    """Runs PaddleOCR inference on multiple documents in a folder."""
     logger.info("[POST] /paddleocr/inference")
     logger.debug("model_version : %s", str(model_version))
     logger.debug("model_lang : %s", str(model_lang))
