@@ -5,11 +5,12 @@ import logging
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import requests
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi.responses import JSONResponse
 
 load_dotenv()
 
@@ -44,6 +45,44 @@ async def health_check() -> dict[str, Any]:
     except Exception as e:
         logger.exception("Connection exception when calling paddleocr")
         raise HTTPException(status_code=500, detail=repr(e)) from e
+
+
+@router.post("/paddleocr/inference_single", status_code=status.HTTP_200_OK)
+async def inference_single_doc(
+    file_upload: Annotated[UploadFile, File()] = None,
+    ocr_model_version: Annotated[str | None, Form()] = None,
+    ocr_model_lang: Annotated[str | None, Form()] = None,
+) -> JSONResponse:
+    """
+    Runs Paddle OCR inference on a single document.
+
+    UploadFile object forwarded onto inference API.
+    """
+    logger.info("[POST] /paddleocr/inference_single_doc")
+    url = f"http://paddleocr:{PADDLEOCR_API_PORT}/inference"
+
+    t1 = datetime.now(tz=UTC)
+
+    file_bytes = await file_upload.read()
+    file = {"file": (file_upload.filename, file_bytes, file_upload.content_type)}
+
+    logger.info("post request - url: %s", url)
+    logger.info("post request - file: %s", file)
+
+    # nb: timeout currently arbitrarily one hour
+    data = {"model_version": ocr_model_version, "model_lang": ocr_model_lang}
+    response = requests.post(url=url, files=file, data=data, timeout=60 * 60)  # noqa: ASYNC210
+
+    t2 = datetime.now(tz=UTC)
+    td = t2 - t1
+
+    response_json = {
+        "filename": str(file_upload.filename),
+        "duration_in_second": td.total_seconds(),
+        "ocr-result": json.loads(response.content.decode("utf-8")),
+    }
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
 
 
 @router.post("/paddleocr/inference")
