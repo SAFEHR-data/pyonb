@@ -6,6 +6,7 @@ import os
 import subprocess
 import time
 from collections.abc import Generator
+from pathlib import Path
 
 import pytest
 from _pytest.fixtures import SubRequest
@@ -29,6 +30,12 @@ class StartApiError(Exception):
     def __init__(self) -> None:
         """Initialize the exception with a message."""
         super().__init__("Cannot find main.py to start API.")
+
+
+@pytest.fixture(scope="module")
+def single_pdf_filepath() -> Path:
+    """Returns filepath of single synthetic PDF file."""
+    return Path("tests/data/single_synthetic_doc/ms-note-one-page.pdf")
 
 
 @pytest.fixture(scope="module")
