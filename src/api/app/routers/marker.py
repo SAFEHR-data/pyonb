@@ -5,11 +5,11 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import requests
 from dotenv import load_dotenv
-from fastapi import APIRouter, status
+from fastapi import APIRouter, File, UploadFile, status
 from fastapi.responses import JSONResponse
 
 load_dotenv()
@@ -23,29 +23,13 @@ else:
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-# Detect if in Docker container
-is_docker = Path("/.dockerenv").exists()
-
 router = APIRouter()
 
 
-@router.get("/marker/health")
-async def health() -> dict[str, Any]:
-    """Test aliveness endpoint for Marker."""
-    logger.info("[GET] /marker/health")
-    url = f"http://marker:{MARKER_API_PORT}/health"
-    response = requests.get(url, timeout=5)  # noqa: ASYNC210
-
-    return json.loads(response.content.decode("utf-8"))
-
-
-@router.post("/marker/inference")
-async def inference() -> JSONResponse:
-    """Runs Marker OCR inference."""
-    logger.info("[POST] /marker/inference")
-    url = f"http://marker:{MARKER_API_PORT}/inference"
-    # URL of marker service
-    # TODO(tom): configure with env var (e.g. so can set 127.0.0.1 if running on host)
+def check_data_folder() -> Path | str:
+    """Check if Docker or local deployment and adjust DATA_FOLDER accordingly."""
+    # Detect if in Docker container
+    is_docker = Path("/.dockerenv").exists()
 
     logger.info("HOST_DATA_FOLDER: %s", str(os.environ.get("HOST_DATA_FOLDER")))
 
@@ -62,6 +46,64 @@ async def inference() -> JSONResponse:
         e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
         logger.exception(NotADirectoryError(e))
         raise NotADirectoryError(e)
+
+    return DATA_FOLDER
+
+
+@router.get("/marker/health")
+async def healthcheck() -> dict[str, Any]:
+    """Test aliveness endpoint for Marker."""
+    logger.info("[GET] /marker/health")
+    url = f"http://marker:{MARKER_API_PORT}/health"
+    response = requests.get(url, timeout=5)  # noqa: ASYNC210
+
+    return json.loads(response.content.decode("utf-8"))
+
+
+@router.post("/marker/inference_single", status_code=status.HTTP_200_OK)
+async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None) -> JSONResponse:
+    """
+    Runs Marker OCR inference on a single document.
+
+    UploadFile object forwarded onto inference API.
+    """
+    logger.info("[POST] /marker/inference_single_doc")
+    url = f"http://marker:{MARKER_API_PORT}/inference"
+
+    t1 = datetime.datetime.now(datetime.UTC)
+
+    file_bytes = await file_upload.read()
+    file = {"file": (file_upload.filename, file_bytes, file_upload.content_type)}
+    headers = {"accept": "application/json"}
+
+    logger.info("post request - url: %s", url)
+    logger.info("post request - file: %s", file)
+    logger.info("post request - headers: %s", headers)
+
+    # nb: timeout currently arbitrarily one hour
+    response = requests.post(url=url, files=file, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
+
+    t2 = datetime.datetime.now(datetime.UTC)
+    td = t2 - t1
+
+    response_json = {
+        "filename": str(file_upload.filename),
+        "duration_in_second": td.total_seconds(),
+        "ocr-result": response.text,
+    }
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
+
+
+@router.post("/marker/inference_folder")
+async def inference_folder() -> JSONResponse:
+    """Runs Marker OCR inference on multiple documents in a folder."""
+    logger.info("[POST] /marker/inference_folder")
+    url = f"http://marker:{MARKER_API_PORT}/inference"
+    # URL of marker service
+    # TODO(tom): configure with env var (e.g. so can set 127.0.0.1 if running on host)
+
+    DATA_FOLDER = check_data_folder()
 
     filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)

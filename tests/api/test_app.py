@@ -12,7 +12,7 @@ def test_local_start_api_and_healthy(ocr_forwarding_api_port: str) -> None:
     """Test API app comes up and healthcheck returns 200."""
     response = requests.get(f"http://127.0.0.1:{ocr_forwarding_api_port}/", timeout=5)
     assert response.status_code == requests.codes.ok
-    assert response.json() == {"service": "pyonb-ocr-api", "status": "healthy"}
+    assert response.url == f"http://127.0.0.1:{ocr_forwarding_api_port}/docs"
 
 
 @pytest.mark.parametrize(
