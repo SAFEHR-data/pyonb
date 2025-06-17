@@ -115,6 +115,40 @@ services:
       retries: 3
       start_period: 30s
 
+  docling:
+    profiles: [docling]
+    build:
+      context: src/ocr/docling
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
+        DOCLING_API_PORT: ${DOCLING_API_PORT}
+    environment:
+      <<: [*proxy-common, *common-env]
+      CONTAINER_DATA_FOLDER: /data
+      DOCLING_API_PORT: ${DOCLING_API_PORT}
+    env_file:
+      - ./.env
+    ports:
+      - "${DOCLING_API_PORT}:${DOCLING_API_PORT}"
+    volumes:
+      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+    networks:
+      - pyonb_ocr_api
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-X",
+          "POST",
+          "http://localhost:${DOCLING_API_PORT}/health",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
   ocr-forwarding-api:
     build:
       context: src/api
