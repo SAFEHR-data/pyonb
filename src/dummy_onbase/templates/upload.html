@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload a Text File</title>
+</head>
+<body>
+  <h1>Upload a .pdf File</h1>
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".pdf,.zip" required />
+    <br><br>
+    <input type="submit" value="Upload">
+  </form>
+
+  <h2>Uploaded Files:</h2>
+  <ul>
+    {% for file in files %}
+      <li><a href="/document/{{ file }}">{{ file }}</a></li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
