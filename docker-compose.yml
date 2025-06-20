@@ -23,7 +23,7 @@
 # Common
 x-http-proxy: &http-proxy ${HTTP_PROXY}
 x-https-proxy: &https-proxy ${HTTPS_PROXY}
-x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker
+x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker,paddleocr
 x-proxy-common: &proxy-common
   HTTP_PROXY: *http-proxy
   http_proxy: *http-proxy
