@@ -23,7 +23,7 @@
 # Common
 x-http-proxy: &http-proxy ${HTTP_PROXY}
 x-https-proxy: &https-proxy ${HTTPS_PROXY}
-x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker
+x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker,paddleocr
 x-proxy-common: &proxy-common
   HTTP_PROXY: *http-proxy
   http_proxy: *http-proxy
@@ -109,6 +109,40 @@ services:
           "-X",
           "POST",
           "http://localhost:${MARKER_API_PORT}/health",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  paddleocr:
+    profiles: [paddleocr]
+    build:
+      context: src/ocr/paddleocr
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
+        PADDLEOCR_API_PORT: ${PADDLEOCR_API_PORT}
+    environment:
+      <<: [*proxy-common, *common-env]
+      CONTAINER_DATA_FOLDER: /data
+      PADDLEOCR_API_PORT: ${PADDLEOCR_API_PORT}
+    env_file:
+      - ./.env
+    ports:
+      - "${PADDLEOCR_API_PORT}:${PADDLEOCR_API_PORT}"
+    volumes:
+      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+    networks:
+      - pyonb_ocr_api
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-X",
+          "GET",
+          "http://localhost:${PADDLEOCR_API_PORT}/health",
         ]
       interval: 10s
       timeout: 3s

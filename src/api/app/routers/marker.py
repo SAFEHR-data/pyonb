@@ -21,7 +21,6 @@ else:
     raise NameError(e)
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 router = APIRouter()
 

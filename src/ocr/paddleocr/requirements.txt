@@ -1,0 +1,11 @@
+setuptools
+pdf2image==1.17.0
+datasets==2.20.0
+pillow==11.1.0
+python-multipart
+requests
+fastapi==0.111.0
+uvicorn[standard]
+paddleocr==2.10.0
+cmake
+python-poppler
