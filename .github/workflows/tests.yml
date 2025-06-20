@@ -126,7 +126,8 @@ jobs:
           tox -- \
             tests/api/test_app.py::test_local_start_api_and_healthy \
             tests/api/test_routers.py::test_router_marker \
-            tests/api/test_routers.py::test_inference_marker
+            tests/api/test_routers.py::test_inference_single_file_upload_marker \
+            tests/api/test_routers.py::test_inference_on_folder_marker
 
       - name: Tear down services
         working-directory: ${{ github.workspace }}

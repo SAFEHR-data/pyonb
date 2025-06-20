@@ -12,11 +12,8 @@ logger = logging.getLogger()
 def convert_pdf_to_markdown(file_path: str | Path):  # noqa: ANN201
     """Convert the PDF to Markdown using Docling."""
     try:
-        logger.info("CWD: %s", Path.cwd())
-        logger.info("LISTDIR: %s", list(Path("some_directory").iterdir()))
-
         converter = DocumentConverter()
-        result = converter.convert(file_path)
+        result = converter.convert(str(file_path))
 
         logger.info("Docling output:")
         logger.info(result.document.export_to_markdown())  # nb: markdown for terminal display
@@ -24,7 +21,7 @@ def convert_pdf_to_markdown(file_path: str | Path):  # noqa: ANN201
         return result.document.export_to_text()
 
     except Exception:
-        logger.exception("Error processing PDF.")
+        logger.exception("Error processing PDF with Docling convert_pdf_to_markdown().")
 
 
 if __name__ == "__main__":

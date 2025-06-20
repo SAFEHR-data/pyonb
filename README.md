@@ -44,9 +44,10 @@ HOST_DATA_FOLDER="/absolute/path/to/documents/folder"
 4. Set OCR service ports, e.g.:
 
 ```sh
-OCR_FORWARDING_API_PORT=8080
+OCR_FORWARDING_API_PORT=8110
+MARKER_API_PORT=8112
 SPARROW_API_PORT=8001
-MARKER_API_PORT=8002
+DOCLING_API_PORT=8115
 ```
 
 > [!IMPORTANT]
@@ -59,18 +60,18 @@ MARKER_API_PORT=8002
 > HTTP_PROXY=
 > ```
 
-5. Start the OCR API Server (e.g. using Sparrow and marker):
+5. Start the OCR API Server (e.g. using marker and docling):
 
 ```sh
-docker compose --profile sparrow --profile marker up -d
+docker compose --profile marker --profile docling up -d
 ```
 
-6. Open FastAPI Swagger at <http://127.0.0.1:8080/docs> to view and execute endpoints.
+6. Open FastAPI Swagger at <http://127.0.0.1:8110/docs> to view and execute endpoints.
 
-The following POST endpoints will execute the OCR tool on all PDFs in the `HOST_DATA_FOLDER`:
+Use the following POST endpoints to execute the chosen OCR tool on a PDFs:
 
-- **sparrow** - POST `sparrow-ocr/inference`
-- **marker** - POST `marker/inference`
+- **marker** - POST `/marker/inference_single`
+- **docling** - POST `/docling/inference_single`
 
 7. View the JSON response:
 
@@ -109,7 +110,7 @@ cp /tests/.env.tests .env
 4. Start the Docker services:
 
 ```sh
-docker compose --profile sparrow --profile marker up -d
+docker compose --profile marker --profile docling up -d
 ```
 
 5. Run tests using tox:
@@ -118,7 +119,14 @@ docker compose --profile sparrow --profile marker up -d
 tox -e py312
 ```
 
-NB: this may take a few minutes to perform the inference tests.
+NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise. For example, with `--profile marker --profile docling` the Sparrow API will not be raised,
+so the associated tests will fail.
+
+To run unit tests individually, adapt the following:
+
+```sh
+tox -e py312 -- tests/api/test_routers.py::test_inference_single_file_upload_marker
+```
 
 ## About
 

@@ -4,9 +4,9 @@ import datetime
 import logging
 
 from fastapi import FastAPI, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
-from .routers import marker, paddleocr, sparrow
+from .routers import docling, marker, paddleocr, sparrow
 
 logging.basicConfig(
     filename="pyonb-" + datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d") + ".log",
@@ -17,11 +17,18 @@ logging.basicConfig(
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-app = FastAPI()
+app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
 app.include_router(sparrow.router)
 app.include_router(marker.router)
 app.include_router(paddleocr.router)
+app.include_router(docling.router)
+
+
+@app.get("/", include_in_schema=False)
+async def root() -> RedirectResponse:
+    """Redirect localhost:<PORT> to Swagger at localhost:<PORT>/docs."""
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/")

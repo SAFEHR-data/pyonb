@@ -34,44 +34,52 @@ def test_router_paddleocr(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"service": "paddleocr", "status": "healthy"}
 
 
-def test_inference_marker(ocr_forwarding_api_port: str) -> None:
-    """
-    Test PDF conversion using marker.
+def test_inference_single_file_upload_marker(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+    """Test PDF conversion using marker with single file endpoint."""
+    url = f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference_single"
 
-    Note:
-    - may take ~minutes to perform inference
-    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+    single_pdf_filename = single_pdf_filepath.name
 
-    """
-    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference", timeout=60 * 60)
+    with Path.open(single_pdf_filepath, "rb") as f:
+        files = {"file_upload": (single_pdf_filename, f, "application/pdf")}
+        headers = {"accept": "application/json"}
+        response = requests.post(url, files=files, headers=headers, timeout=60 * 60)
+
     assert response.status_code == requests.codes.ok
-    assert response.json()["total_duration_in_second"] > 0
-    assert response.json()["result"][0]["filename"] in {
-        "ms-note-one-page.pdf",
-        "uk-hospital-note.pdf",
-        "uk-hospital-note-2.pdf",
-        "uk-hospital-note-3.pdf",
-    }
+    assert response.json()["duration_in_second"] > 0
+    assert response.json()["filename"] in single_pdf_filename
 
 
-def test_inference_sparrow(ocr_forwarding_api_port: str) -> None:
-    """
-    Test PDF conversion using sparrow.
+def test_inference_single_file_upload_sparrow(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+    """Test PDF conversion using sparrow with single file endpoint."""
+    url = f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference_single"
 
-    Note:
-    - may take ~minutes to perform inference
-    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+    single_pdf_filename = single_pdf_filepath.name
 
-    """
-    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference", timeout=60 * 60)
+    with Path.open(single_pdf_filepath, "rb") as f:
+        files = {"file_upload": (single_pdf_filename, f, "application/pdf")}
+        headers = {"accept": "application/json"}
+        response = requests.post(url, files=files, headers=headers, timeout=60 * 60)
+
     assert response.status_code == requests.codes.ok
-    assert response.json()["total_duration_in_second"] > 0
-    assert response.json()["result"][0]["filename"] in {
-        "ms-note-one-page.pdf",
-        "uk-hospital-note.pdf",
-        "uk-hospital-note-2.pdf",
-        "uk-hospital-note-3.pdf",
-    }
+    assert response.json()["duration_in_second"] > 0
+    assert response.json()["filename"] in single_pdf_filename
+
+
+def test_inference_single_file_upload_docling(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+    """Test PDF conversion using Docling with single file endpoint."""
+    url = f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/inference_single"
+
+    single_pdf_filename = single_pdf_filepath.name
+
+    with Path.open(single_pdf_filepath, "rb") as f:
+        files = {"file_upload": (single_pdf_filename, f, "application/pdf")}
+        headers = {"accept": "application/json"}
+        response = requests.post(url, files=files, headers=headers, timeout=60 * 60)
+
+    assert response.status_code == requests.codes.ok
+    assert response.json()["duration_in_second"] > 0
+    assert response.json()["filename"] in single_pdf_filename
 
 
 def test_inference_single_file_upload_paddleocr(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
@@ -87,6 +95,68 @@ def test_inference_single_file_upload_paddleocr(ocr_forwarding_api_port: str, si
     assert response.status_code == requests.codes.ok
     assert response.json()["duration_in_second"] > 0
     assert response.json()["filename"] in single_pdf_filename
+
+
+def test_inference_on_folder_marker(ocr_forwarding_api_port: str) -> None:
+    """
+    Test PDF conversion using marker pointed at a folder of files.
+
+    Note:
+    - may take ~minutes to perform inference
+    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+
+    """
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference_folder", timeout=60 * 60)
+    assert response.status_code == requests.codes.ok
+    assert response.json()["total_duration_in_second"] > 0
+    assert response.json()["result"][0]["filename"] in {
+        "ms-note-one-page.pdf",
+        "uk-hospital-note.pdf",
+        "uk-hospital-note-2.pdf",
+        "uk-hospital-note-3.pdf",
+    }
+
+
+def test_inference_on_folder_sparrow(ocr_forwarding_api_port: str) -> None:
+    """
+    Test PDF conversion using sparrow pointed at a folder of files.
+
+    Note:
+    - may take ~minutes to perform inference
+    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+
+    """
+    response = requests.post(
+        f"http://127.0.0.1:{ocr_forwarding_api_port}/sparrow-ocr/inference_folder", timeout=60 * 60
+    )
+    assert response.status_code == requests.codes.ok
+    assert response.json()["total_duration_in_second"] > 0
+    assert response.json()["result"][0]["filename"] in {
+        "ms-note-one-page.pdf",
+        "uk-hospital-note.pdf",
+        "uk-hospital-note-2.pdf",
+        "uk-hospital-note-3.pdf",
+    }
+
+
+def test_inference_on_folder_docling(ocr_forwarding_api_port: str) -> None:
+    """
+    Test PDF conversion using Docling pointed at a folder of files.
+
+    Note:
+    - may take ~minutes to perform inference
+    - four possible files assertion depending on whether testing single_synthetic_doc or multiple_synthetic_docs folder
+
+    """
+    response = requests.post(f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/inference_folder", timeout=60 * 60)
+    assert response.status_code == requests.codes.ok
+    assert response.json()["total_duration_in_second"] > 0
+    assert response.json()["result"][0]["filename"] in {
+        "ms-note-one-page.pdf",
+        "uk-hospital-note.pdf",
+        "uk-hospital-note-2.pdf",
+        "uk-hospital-note-3.pdf",
+    }
 
 
 def test_inference_on_folder_paddleocr(ocr_forwarding_api_port: str) -> None:

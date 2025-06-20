@@ -1,4 +1,4 @@
-"""Routers for Marker OCR."""
+"""Routers for Docling OCR."""
 
 import datetime
 import json
@@ -14,13 +14,17 @@ from fastapi.responses import JSONResponse
 
 load_dotenv()
 
-if os.getenv("MARKER_API_PORT"):
-    MARKER_API_PORT = os.getenv("MARKER_API_PORT")
+if os.getenv("DOCLING_API_PORT"):
+    DOCLING_API_PORT = os.getenv("DOCLING_API_PORT")
 else:
-    e = "MARKER_API_PORT environment variable not found."
+    e = "DOCLING_API_PORT environment variable not found."
     raise NameError(e)
 
 logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# Detect if in Docker container
+is_docker = Path("/.dockerenv").exists()
 
 router = APIRouter()
 
@@ -49,25 +53,25 @@ def check_data_folder() -> Path | str:
     return DATA_FOLDER
 
 
-@router.get("/marker/health")
-async def healthcheck() -> dict[str, Any]:
-    """Test aliveness endpoint for Marker."""
-    logger.info("[GET] /marker/health")
-    url = f"http://marker:{MARKER_API_PORT}/health"
+@router.get("/docling/health")
+async def health() -> dict[str, Any]:
+    """Test aliveness endpoint for Docling."""
+    logger.info("[GET] /docling/health")
+    url = f"http://docling:{DOCLING_API_PORT}/health"
     response = requests.get(url, timeout=5)  # noqa: ASYNC210
 
     return json.loads(response.content.decode("utf-8"))
 
 
-@router.post("/marker/inference_single", status_code=status.HTTP_200_OK)
+@router.post("/docling/inference_single", status_code=status.HTTP_200_OK)
 async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None) -> JSONResponse:
     """
-    Runs Marker OCR inference on a single document.
+    Runs Docling OCR inference on a single document.
 
     UploadFile object forwarded onto inference API.
     """
-    logger.info("[POST] /marker/inference_single_doc")
-    url = f"http://marker:{MARKER_API_PORT}/inference"
+    logger.info("[POST] /docling/inference_single_doc")
+    url = f"http://docling:{DOCLING_API_PORT}/inference"
 
     t1 = datetime.datetime.now(datetime.UTC)
 
@@ -94,12 +98,12 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
 
 
-@router.post("/marker/inference_folder")
+@router.post("/docling/inference_folder")
 async def inference_folder() -> JSONResponse:
-    """Runs Marker OCR inference on multiple documents in a folder."""
-    logger.info("[POST] /marker/inference_folder")
-    url = f"http://marker:{MARKER_API_PORT}/inference"
-    # URL of marker service
+    """Runs Docling OCR inference on multiple documents in a folder."""
+    logger.info("[POST] /docling/inference_folder")
+    url = f"http://docling:{DOCLING_API_PORT}/inference"
+    # URL of docling service
     # TODO(tom): configure with env var (e.g. so can set 127.0.0.1 if running on host)
 
     DATA_FOLDER = check_data_folder()
