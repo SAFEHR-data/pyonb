@@ -6,7 +6,7 @@ import logging
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from .routers import docling, marker, sparrow
+from .routers import docling, marker, paddleocr, sparrow
 
 logging.basicConfig(
     filename="pyonb-" + datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d") + ".log",
@@ -21,6 +21,7 @@ app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
 app.include_router(sparrow.router)
 app.include_router(marker.router)
+app.include_router(paddleocr.router)
 app.include_router(docling.router)
 
 

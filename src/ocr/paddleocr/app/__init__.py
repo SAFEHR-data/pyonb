@@ -1,0 +1,1 @@
+"""Initialise paddleocr package."""
