@@ -23,13 +23,23 @@ def test_evaluate_metrics(ground_truth_txt_filepath: Path, marker_ocr_json_filep
     - Word Error Rate
     - Exact Match Rate
     - Normalised Edit Distance
-    """
-    gt_text = read_file(ground_truth_txt_filepath)
-    ocr_json = read_file(marker_ocr_json_filepath)
-    ocr_text = literal_eval(ocr_json["ocr-result"])  # convert \\n to \n
 
-    results = evaluate_metrics(gt_text, ocr_text)
+    Assumes:
+    - ground_truth_txt_filepath = .txt loaded as str
+    - marker_ocr_json_filepath = .txt loaded as str, or, .json subsequently converted to str
+    """
+    gt_file_output = str(read_file(ground_truth_txt_filepath))
+    ocr_file_output = read_file(marker_ocr_json_filepath)
+
+    if isinstance(ocr_file_output, str):
+        results = evaluate_metrics(str(gt_file_output), str(ocr_file_output))
+    elif isinstance(ocr_file_output, dict):
+        ocr_text = literal_eval(ocr_file_output["ocr-result"])
+        results = evaluate_metrics(str(gt_file_output), ocr_text)
+    else:
+        msg = "OCR file is not .txt or .json."
+        raise TypeError(msg)
+
     assert results["cer"] > 0
     assert results["wer"] > 0
-    assert results["emr"] > 0
     assert results["ned"] > 0

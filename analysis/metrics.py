@@ -1,6 +1,6 @@
 """OCR tool performance metrics."""
+
 import Levenshtein
-from pathlib import Path
 
 
 def cer(gt: str, pred: str) -> float:

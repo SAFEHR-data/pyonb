@@ -27,6 +27,7 @@ def ground_truth_txt_filepath() -> Path:
     """
     return Path("tests/data/ocr_eval/copy_paste_ms-note-one-page.txt")
 
+
 @pytest.fixture(scope="module")
 def marker_ocr_json_filepath() -> Path:
     """Returns filepath of Marker OCR JSON output."""
