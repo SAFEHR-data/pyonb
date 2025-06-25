@@ -6,6 +6,15 @@ from pathlib import Path
 from analysis.eval_ocr import evaluate_metrics, read_file
 
 
+def test_read_file(ground_truth_txt_filepath: Path, marker_ocr_json_filepath: Path) -> None:
+    """Test read_file."""
+    gt_text = read_file(ground_truth_txt_filepath)
+    ocr_json = read_file(marker_ocr_json_filepath)
+
+    assert isinstance(gt_text, str)
+    assert isinstance(ocr_json, dict)
+
+
 def test_evaluate_metrics(ground_truth_txt_filepath: Path, marker_ocr_json_filepath: Path) -> None:
     """
     Test OCR evaluation metrics.
