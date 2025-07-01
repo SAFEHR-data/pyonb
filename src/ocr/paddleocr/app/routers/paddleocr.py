@@ -150,4 +150,4 @@ async def inference(
     if result is None:
         raise HTTPException(status_code=400, detail="Failed to process the input.")
 
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"page_count": len(result), "result": result})
+    return JSONResponse(status_code=status.HTTP_200_OK, content=result)
