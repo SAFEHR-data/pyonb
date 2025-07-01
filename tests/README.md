@@ -57,3 +57,31 @@ To run unit tests individually, adapt the following to your chosen OCR tool:
 ```sh
 tox -e py312 -- tests/api/test_routers.py::test_inference_single_file_upload_marker
 ```
+
+## Troubleshooting
+
+> The tests are failing!
+
+- Have you copied `.env.tests` to root and renamed it `.env`?
+- Have you set the environment variables in `.env`?
+
+> I'm running the tests locally and they are failing!
+
+- Have you exported the environment variables on your local machine?
+
+> Some of the tests are passing, but some are failing!
+
+- Have you run tests for OCR tools which you have not raised via `docker compose`?
+
+> I am running an OCR inference test, but it is taking ages!
+
+- Is your internet connection slow? Some of the OCR tools install Nvidia drivers which can take a while.
+
+> The containers are building but one of the OCR tools is not working!
+
+- Do you have appropriate user permissions on your machine? Some of the OCR tools download files (model weights etc.), which require internet access and local write permission.
+
+> The containers are building but when I go to `http://localhost:PORT_XXXX` I don't see Swagger!
+
+- Is something already running on `PORT_XXXX`?
+- Have you tried changing the port in `.env` to something else?
