@@ -17,13 +17,13 @@ The APIs can be raised and used individually, without Docker Compose if you pref
 The `src/` folder contains the following directories:
 
 - `api/` - Forwarding API and routers code associated with the OCR tools
-   - `Dockerfile` - Builds the Forwarding API container
-   - `app/main.py` - Forwarding API code entrypoint
-   - `routers/**.py` - Forwarding API endpoints which connect to specified OCR tool endpoints
+  - `Dockerfile` - Builds the Forwarding API container
+  - `app/main.py` - Forwarding API code entrypoint
+  - `routers/**.py` - Forwarding API endpoints which connect to specified OCR tool endpoints
 - `ocr/` - APIs and wrapper code for performing OCR processing
-   - `docling/marker/etc.` - one directory per OCR tool
-      - `Dockerfile` - Builds the OCR tool as a container service
-      - `api.py` - Endpoints for the OCR tool
-      - `main.py` - OCR tool execution code
-   - *Note: Paddle uses a slightly different folder structure and Sparrow uses the folder structure of the host repo.*
+  - `docling/marker/etc.` - one directory per OCR tool
+    - `Dockerfile` - Builds the OCR tool as a container service
+    - `api.py` - Endpoints for the OCR tool
+    - `main.py` - OCR tool execution code
+  - _Note: Paddle uses a slightly different folder structure and Sparrow uses the folder structure of the host repo._
 - `pyonb/` - automated versioning code
