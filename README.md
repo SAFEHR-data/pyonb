@@ -87,46 +87,7 @@ Use the following POST endpoints to execute the chosen OCR tool on a PDFs:
 
 ## Tests
 
-1. Clone the repo:
-
-```sh
-git clone https://github.com/SAFEHR-data/pyonb.git
-```
-
-2. Create a virtual environment ([we suggest using uv](https://docs.astral.sh/uv/pip/environments/)) and install dependencies:
-
-```sh
-uv venv --python3.12
-source .venv/bin/activate
-uv sync
-```
-
-3. Copy the `tests/` .env file to root directory to use with tox:
-
-```sh
-cp /tests/.env.tests .env
-```
-
-4. Start the Docker services:
-
-```sh
-docker compose --profile marker --profile docling up -d
-```
-
-5. Run tests using tox:
-
-```sh
-tox -e py312
-```
-
-NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise. For example, with `--profile marker --profile docling` the Sparrow API will not be raised,
-so the associated tests will fail.
-
-To run unit tests individually, adapt the following:
-
-```sh
-tox -e py312 -- tests/api/test_routers.py::test_inference_single_file_upload_marker
-```
+Follow the link for the [unit and integration testing guide](tests/README.md).
 
 ## About
 
