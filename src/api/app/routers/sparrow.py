@@ -90,7 +90,7 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
 
 
-@router.post("/sparrow-ocr/inference")
+@router.post("/sparrow-ocr/inference_folder")
 async def inference_folder() -> dict:
     """Runs Sparrow OCR inference on multiple documents in a folder."""
     logger.info("[POST] /sparrow-ocr/inference")
