@@ -1,8 +1,5 @@
 # pyonb
 
-> [!WARNING]
-> This repo is under construction.
-
 <!--COMMENT OUT
 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
@@ -15,12 +12,12 @@ END COMMENT OUT-->
 
 **pyonb** is two things:
 
-- a Python SDK for document extraction via the Hyland OnBase REST API (_work in progress_)
-- a suite of APIs wrapped around open-source Optical Character Recognition (OCR) tools, designed for local deployment, for converting PDFs to structured text including:
+- a suite of APIs wrapped around open-source Optical Character Recognition (OCR) tools, designed for local deployment, for converting documents (PDFs, JPEG, etc.) to computable-readable text including:
   - [Marker](https://github.com/VikParuchuri/marker)
   - [Sparrow](https://github.com/katanaml/sparrow)
   - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
   - [Docling](https://github.com/docling-project/docling)
+- a Python SDK for document extraction via the Hyland OnBase REST API (_work in progress_)
 
 ## Getting Started
 
@@ -47,6 +44,7 @@ HOST_DATA_FOLDER="/absolute/path/to/documents/folder"
 OCR_FORWARDING_API_PORT=8110
 MARKER_API_PORT=8112
 SPARROW_API_PORT=8001
+PADDLEOCR_API_PORT=8114
 DOCLING_API_PORT=8115
 ```
 
