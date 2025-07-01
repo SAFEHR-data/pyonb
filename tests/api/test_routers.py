@@ -28,11 +28,7 @@ def test_router_sparrow(ocr_forwarding_api_port: str) -> None:
 
 
 def test_router_docling(ocr_forwarding_api_port: str) -> None:
-    """
-    Test healthcheck for docling.
-
-    - Note: uses docling devs' own API.
-    """
+    """Test healthcheck for docling."""
     response = requests.get(f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/health", timeout=5)
     assert response.status_code == requests.codes.ok
     assert response.json() == {"service": "docling", "status": "healthy"}
