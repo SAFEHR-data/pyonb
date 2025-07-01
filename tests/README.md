@@ -15,6 +15,8 @@ pyonb uses GitHub Actions for automated testing. The [`tests.yaml` GitHub Action
 
 ### Local Execution
 
+**Recommended:** run unit tests against specific OCR tool APIs. For example, if you raise the Marker and Docling OCR services, do not run the Paddle unit tests as they will fail.
+
 1. Clone the repo:
 
 ```sh
@@ -35,22 +37,21 @@ uv sync
 cp /tests/.env.tests .env
 ```
 
-4. Start the Docker services:
+4. Edit `.env` to set the `HOST_DATA_FOLDER` to point at your local `/tests/data/single_synthetic_doc` directory
+
+5. Start the Docker services using your chosen OCR tools, e.g.:
 
 ```sh
 docker compose --profile marker --profile docling up -d
 ```
 
-5. Run tests using tox:
+6. Run tests using tox (inference may take ~minutes):
 
 ```sh
 tox -e py312
 ```
 
-NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise. For example, with `--profile marker --profile docling` the Sparrow API will not be raised,
-so the associated tests will fail.
-
-To run unit tests individually, adapt the following:
+To run unit tests individually, adapt the following to your chosen OCR tool:
 
 ```sh
 tox -e py312 -- tests/api/test_routers.py::test_inference_single_file_upload_marker
