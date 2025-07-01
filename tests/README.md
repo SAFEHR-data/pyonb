@@ -1,19 +1,20 @@
-## Tests
+# Tests
 
-### Test Directories
+## Test Directories
 
 The `tests/` folder contains the following directories:
+
 - `analysis/` - for testing the OCR evaluation metrics code
 - `api/` - for testing API availability and OCR processing endpoints
 - `data/single_synthetic_doc` - single synthetic PDF typically used in POST request to API endpoint
 - `data/multiple_synthetic_docs` - synthetic documents for testing pyonb batch processing when pointed at a folder containing multiple documents
 - `data/ocr_eval` - files for testing OCR evaluation metrics. The `.txt` file is a copy-pasted version of the file in `data/single_synthetic_doc` for use as a ground truth. The `.json` file is the output from Marker OCR.
 
-### Automated Testing
+## Automated Testing
 
 pyonb uses GitHub Actions for automated testing. The [`tests.yaml` GitHub Action](../.github/workflows/tests.yml) spins up the OCR Forwarding API and a single OCR service (Marker) against which to run unit tests. Automated testing is not performed across all OCR tools to save GitHub minutes. For testing the other OCR tools, perform local testing.
 
-### Local Execution
+## Local Execution
 
 **Recommended:** run unit tests against specific OCR tool APIs. For example, if you raise the Marker and Docling OCR services, do not run the Paddle unit tests as they will fail.
 
