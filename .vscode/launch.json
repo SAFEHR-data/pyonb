@@ -59,6 +59,23 @@
       ],
       "jinja": true,
       "justMyCode": true
+    },
+    {
+      "name": "run eval_ocr.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/analysis/eval_ocr.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "args": [
+        "-gt",
+        "tests/data/ocr_eval/copy_paste_ms-note-one-page.txt",
+        "-ocr",
+        "tests/data/ocr_eval/marker_ocr_ms-note-one-page.json"
+      ]
     }
   ]
 }
