@@ -1,6 +1,6 @@
 # OCR performance evaluation metrics
 
-The `analysis` directory contains code for evaluating the performance of OCR tools. The metrics include:
+The `pyonb.analysis` module contains code for evaluating the performance of OCR tools. The metrics include:
 
 - Character Error Rate (CER)
 - Word Error Rate (WER)
@@ -14,7 +14,7 @@ For all of these metrics 0 = perfect score and 1 = maximum dissimilarity.
 
 2. **OCR Processed File:** Process your PDF file with an OCR tool. Either save the output as a .txt file, or in the case of pyonb, save it as a .json file (e.g. `ocr-output.json`). Note, the JSON response from pyonb is a dictionary structure which contains a key-value pair `"ocr-result": "example output text"`
 
-3. Run OCR performance metrics (code below uses files in [tests/](../tests/data/ocr_eval/) directory):
+3. Run OCR performance metrics (code below uses files in [tests/](../../../tests/data/ocr_eval/) directory):
 
 ```shell
 cd pyonb/
