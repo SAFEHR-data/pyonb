@@ -3,7 +3,7 @@
 from ast import literal_eval
 from pathlib import Path
 
-from analysis.eval_ocr import evaluate_metrics, read_file
+from pyonb.analysis.eval_ocr import evaluate_metrics, read_file
 
 
 def test_read_file(ground_truth_txt_filepath: Path, marker_ocr_json_filepath: Path) -> None:
