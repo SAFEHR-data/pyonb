@@ -68,14 +68,7 @@ services:
     networks:
       - pyonb_ocr_api
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-X",
-          "GET",
-          "http://localhost:${SPARROW_API_PORT}",
-        ]
+      test: ["CMD", "curl", "-X", "GET", "http://localhost:${SPARROW_API_PORT}"]
       interval: 10s
       timeout: 3s
       retries: 3
