@@ -34,6 +34,13 @@ def test_router_paddleocr(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"service": "paddleocr", "status": "healthy"}
 
 
+def test_router_kreuzberg(ocr_forwarding_api_port: str) -> None:
+    """Test healthcheck for kreuzberg."""
+    response = requests.get(f"http://127.0.0.1:{ocr_forwarding_api_port}/kreuzberg/health", timeout=5)
+    assert response.status_code == requests.codes.ok
+    assert response.json() == {"service": "kreuzberg", "status": "healthy"}
+
+
 def test_inference_single_file_upload_marker(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
     """Test PDF conversion using marker with single file endpoint."""
     url = f"http://127.0.0.1:{ocr_forwarding_api_port}/marker/inference_single"
@@ -95,6 +102,21 @@ def test_inference_single_file_upload_paddleocr(ocr_forwarding_api_port: str, si
     assert response.status_code == requests.codes.ok
     assert response.json()["duration_in_second"] > 0
     assert response.json()["filename"] in single_pdf_filename
+
+
+def test_inference_single_file_upload_kreuzberg(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
+    """Test PDF conversion using marker with single file endpoint."""
+    url = f"http://127.0.0.1:{ocr_forwarding_api_port}/kreuzberg-ocr/inference_single"
+
+    single_pdf_filename = single_pdf_filepath.name
+
+    with Path.open(single_pdf_filepath, "rb") as f:
+        files = {"file_upload": (single_pdf_filename, f, "application/pdf")}
+        response = requests.post(url, files=files, timeout=60 * 60)
+
+    assert response.status_code == requests.codes.ok
+    assert response.json()["duration_in_second"] >= 0
+    assert response.json()["filename"] == single_pdf_filename
 
 
 def test_inference_on_folder_marker(ocr_forwarding_api_port: str) -> None:
