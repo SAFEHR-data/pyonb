@@ -183,6 +183,40 @@ services:
       retries: 3
       start_period: 30s
 
+  kreuzberg:
+    profiles: [kreuzberg]
+    build:
+      context: packages/ocr/kreuzberg
+      dockerfile: Dockerfile
+      args:
+        <<: *build-args-common
+        KREUZBERG_API_PORT: ${KREUZBERG_API_PORT}
+    environment:
+      <<: [*proxy-common, *common-env]
+      DATA_FOLDER: /data
+      KREUZBERG_API_PORT: ${KREUZBERG_API_PORT}
+    env_file:
+      - ./.env
+    ports:
+      - "${KREUZBERG_API_PORT}:${KREUZBERG_API_PORT}"
+    volumes:
+      - ${PWD}/${DATA_FOLDER}:/data
+    networks:
+      - pyonb_ocr_api
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-X",
+          "GET",
+          "http://localhost:${KREUZBERG_API_PORT}/health",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
   ocr-forwarding-api:
     build:
       context: src/api
