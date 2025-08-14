@@ -52,6 +52,8 @@ optional-dependencies = {dev = [
 ], test = [
     "pytest",
     "pytest-cov",
+], kreuzberg = [
+    "pyonb-kreuzberg",
 ]}
 readme = "README.md"
 requires-python = ">=3.11"
@@ -149,3 +151,11 @@ env.docs = {commands = [
 gh.python."3.11" = ["py311"]
 gh.python."3.12" = ["py312"]
 gh.python."3.13" = ["py313"]
+
+[tool.uv.sources]
+pyonb-kreuzberg = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "packages/ocr/*",
+]
