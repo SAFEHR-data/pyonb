@@ -23,7 +23,7 @@
 # Common
 x-http-proxy: &http-proxy ${HTTP_PROXY}
 x-https-proxy: &https-proxy ${HTTPS_PROXY}
-x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker,paddleocr
+x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker,paddleocr,docling
 x-proxy-common: &proxy-common
   HTTP_PROXY: *http-proxy
   http_proxy: *http-proxy
@@ -68,14 +68,7 @@ services:
     networks:
       - pyonb_ocr_api
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-X",
-          "POST",
-          "http://localhost:${SPARROW_API_PORT}/sparrow-ocr",
-        ]
+      test: ["CMD", "curl", "-X", "GET", "http://localhost:${SPARROW_API_PORT}"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -107,7 +100,7 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
+          "GET",
           "http://localhost:${MARKER_API_PORT}/health",
         ]
       interval: 10s
@@ -175,7 +168,7 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
+          "GET",
           "http://localhost:${DOCLING_API_PORT}/health",
         ]
       interval: 10s
@@ -243,7 +236,7 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
+          "GET",
           "http://localhost:${OCR_FORWARDING_API_PORT}/",
         ]
       interval: 10s

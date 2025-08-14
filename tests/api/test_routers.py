@@ -27,8 +27,15 @@ def test_router_sparrow(ocr_forwarding_api_port: str) -> None:
     assert response.json() == {"message": "Sparrow OCR API"}
 
 
+def test_router_docling(ocr_forwarding_api_port: str) -> None:
+    """Test healthcheck for docling."""
+    response = requests.get(f"http://127.0.0.1:{ocr_forwarding_api_port}/docling/health", timeout=5)
+    assert response.status_code == requests.codes.ok
+    assert response.json() == {"service": "docling", "status": "healthy"}
+
+
 def test_router_paddleocr(ocr_forwarding_api_port: str) -> None:
-    """Test healthcheck for marker."""
+    """Test healthcheck for paddleocr."""
     response = requests.get(f"http://127.0.0.1:{ocr_forwarding_api_port}/paddleocr/health", timeout=5)
     assert response.status_code == requests.codes.ok
     assert response.json() == {"service": "paddleocr", "status": "healthy"}

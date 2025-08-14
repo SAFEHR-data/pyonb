@@ -79,7 +79,7 @@ async def inference_single_doc(
     response_json = {
         "filename": str(file_upload.filename),
         "duration_in_second": td.total_seconds(),
-        "ocr-result": json.loads(response.content.decode("utf-8")),
+        "ocr-result": response.json(),
     }
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)

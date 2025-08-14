@@ -5,7 +5,7 @@ import json
 from ast import literal_eval
 from pathlib import Path
 
-from analysis.metrics import cer, ned, wer
+from pyonb.analysis.metrics import cer, ned, wer
 
 
 def read_file(file_path: Path) -> str | dict:
