@@ -49,11 +49,11 @@ optional-dependencies = {dev = [
     "mkdocs-material",
     "mkdocstrings",
     "mkdocstrings-python",
+], kreuzberg = [
+    "pyonb-kreuzberg",
 ], test = [
     "pytest",
     "pytest-cov",
-], kreuzberg = [
-    "pyonb-kreuzberg",
 ]}
 readme = "README.md"
 requires-python = ">=3.11"
@@ -153,7 +153,7 @@ gh.python."3.12" = ["py312"]
 gh.python."3.13" = ["py313"]
 
 [tool.uv.sources]
-pyonb-kreuzberg = { workspace = true }
+pyonb-kreuzberg = {workspace = true}
 
 [tool.uv.workspace]
 members = [

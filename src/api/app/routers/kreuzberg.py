@@ -1,11 +1,11 @@
 """Routers for Kreuzberg OCR."""
 
-import aiohttp
 import logging
 import os
 import time
 from typing import Annotated, Any
 
+import aiohttp
 from fastapi import APIRouter, File, UploadFile, status
 from fastapi.responses import JSONResponse
 
@@ -24,11 +24,11 @@ async def healthcheck() -> dict[str, Any]:
     url = f"http://kreuzberg:{KREUZBERG_API_PORT}/health"
 
     try:
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
             async with session.get(url) as response:
                 response.raise_for_status()
-    except aiohttp.ClientError as e:
-        logger.exception(f"Failed to connect to kreuzberg service: {e}")
+    except aiohttp.ClientError:
+        logger.exception("Failed to connect to kreuzberg service")
         raise
 
     return JSONResponse(
@@ -49,7 +49,7 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
 
     data = aiohttp.FormData()
     data.add_field(
-        "data",  # field name expected by Kreuzberg's /extract API
+        "data",  # field name expected by Kreuzberg's /extract API
         file_upload.file,
         filename=file_upload.filename,
         content_type=file_upload.content_type,
@@ -60,10 +60,9 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
     logger.info("post request - data: %s", data)
     logger.info("post request - headers: %s", headers)
 
-
     t1 = time.perf_counter()
     try:
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
             async with session.post(url, data=data, headers=headers) as response:
                 response.raise_for_status()
                 ocr_results = await response.json()
@@ -74,7 +73,7 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
 
     # Kreuzberg's /extract API expects a list of documents and always returns a list of extracted text
     # We only ever extract and return content for a single document
-    ocr_result = ocr_results[0]['content']
+    ocr_result = ocr_results[0]["content"]
 
     response_json = {
         "filename": str(file_upload.filename),

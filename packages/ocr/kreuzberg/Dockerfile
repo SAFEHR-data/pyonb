@@ -16,4 +16,3 @@ RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked uv sync --no-editab
 ENV PATH="/app/.venv/bin:$PATH"
 
 CMD uvicorn kreuzberg._api.main:app --host 0.0.0.0 --port "$KREUZBERG_API_PORT" --workers 4 --reload --use-colors
-
