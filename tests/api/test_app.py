@@ -17,7 +17,14 @@ def test_local_start_api_and_healthy(ocr_forwarding_api_port: str) -> None:
 
 @pytest.mark.parametrize(
     "check_container_healthy",
-    ["pyonb-ocr-forwarding-api-1", "pyonb-marker-1", "pyonb-sparrow-1", "pyonb-paddleocr-1", "pyonb-docling-1"],
+    [
+        "pyonb-ocr-forwarding-api-1",
+        "pyonb-marker-1",
+        "pyonb-sparrow-1",
+        "pyonb-paddleocr-1",
+        "pyonb-docling-1",
+        "pyonb-kreuzberg-1",
+    ],
     indirect=True,
 )
 def test_check_services(check_container_healthy: bool) -> None:

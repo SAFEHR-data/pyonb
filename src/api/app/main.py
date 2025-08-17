@@ -6,10 +6,11 @@ import logging
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from .routers import docling, marker, paddleocr, sparrow
+from .routers import docling, kreuzberg, marker, paddleocr, sparrow
 
+_today = datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d")  # type: ignore[attr-defined] # mypy complains that 'Module has no attribute "UTC"'
 logging.basicConfig(
-    filename="pyonb-" + datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d") + ".log",
+    filename=f"pyonb-{_today}.log",
     format="%(asctime)s %(message)s",
     filemode="a",
 )
@@ -23,6 +24,7 @@ app.include_router(sparrow.router)
 app.include_router(marker.router)
 app.include_router(paddleocr.router)
 app.include_router(docling.router)
+app.include_router(kreuzberg.router)
 
 
 @app.get("/", include_in_schema=False)
