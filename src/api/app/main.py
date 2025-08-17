@@ -5,7 +5,8 @@ import logging
 
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, RedirectResponse
-from routers import docling, kreuzberg, marker, paddleocr, sparrow
+
+from .routers import docling, kreuzberg, marker, paddleocr, sparrow
 
 _today = datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d")  # type: ignore[attr-defined] # mypy complains that 'Module has no attribute "UTC"'
 logging.basicConfig(
