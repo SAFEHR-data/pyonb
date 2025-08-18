@@ -219,7 +219,7 @@ services:
         OCR_FORWARDING_API_PORT: ${OCR_FORWARDING_API_PORT}
     environment:
       <<: [*proxy-common, *common-env]
-      CONTAINER_DATA_FOLDER: /data
+      DATA_FOLDER: /data
       OCR_FORWARDING_API_PORT: ${OCR_FORWARDING_API_PORT}
     env_file:
       - ./.env
@@ -227,7 +227,7 @@ services:
       - "${OCR_FORWARDING_API_PORT}:${OCR_FORWARDING_API_PORT}"
     volumes:
       - ./src/api/app:/app
-      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+      - ${PWD}/${DATA_FOLDER}:/data
     networks:
       - pyonb_ocr_api
     healthcheck:
