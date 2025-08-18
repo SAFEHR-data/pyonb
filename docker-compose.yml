@@ -145,7 +145,7 @@ services:
   docling:
     profiles: [docling]
     build:
-      context: src/ocr/docling
+      context: packages/ocr/docling
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
