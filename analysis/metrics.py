@@ -8,7 +8,7 @@ def cer(gt: str, pred: str) -> float:
     Character Error Rate (CER): edit distance / length of ground truth.
 
     CER = 0 - Perfect character match
-    CER = 1 - Completely different
+    CER = >0 - percentage of character changes or insertions to match - can be >100% if insertion required
     """
     if not gt:
         return float("inf") if pred else 0.0
@@ -20,11 +20,29 @@ def wer(gt: str, pred: str) -> float:
     Word Error Rate (WER): edit distance over tokenized words.
 
     WER = 0 - Perfect word match
-    WER = 1 - Completely different
+    WER = >0 - percentage of word changes or insertions to match - can be >100% if insertion required
     """
     gt_words = gt.split()
     pred_words = pred.split()
-    return round(Levenshtein.distance(" ".join(gt_words), " ".join(pred_words)) / max(1, len(gt_words)), 3)
+    
+    # dynamic programming matrix
+    dp = [[0] * (len(pred_words) + 1) for _ in range(len(gt_words) + 1)]
+
+    for i in range(len(gt_words) + 1):
+        dp[i][0] = i
+    for j in range(len(pred_words) + 1):
+        dp[0][j] = j
+
+    for i in range(1, len(gt_words) + 1):
+        for j in range(1, len(pred_words) + 1):
+            cost = 0 if gt_words[i-1] == pred_words[j-1] else 1
+            dp[i][j] = min(
+                dp[i-1][j] + 1,      # deletion
+                dp[i][j-1] + 1,      # insertion
+                dp[i-1][j-1] + cost  # substitution
+            )
+
+    return round(dp[len(gt_words)][len(pred_words)] / max(1, len(gt_words)), 3)
 
 
 def emr(gt_list: list[str], pred_list: list[str]) -> float:
@@ -41,7 +59,7 @@ def ned(gt: str, pred: str) -> float:
     Normalized Edit Distance: edit distance / max length.
 
     NED = 0 - Perfect match, strings identical
-    NED = 1 - Maximum dissimilarity
+    NED = 1 - all characters changed to make strings identical
     """
     max_len = max(len(gt), len(pred))
     if max_len == 0:
