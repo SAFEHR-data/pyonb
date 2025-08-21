@@ -8,9 +8,9 @@ from pathlib import Path
 from analysis.metrics import cer, ned, wer
 
 
-def read_file(file_path: Path) -> str | dict:
+def read_file(file_path: Path, file_encoding: str = "cp1252") -> str | dict:
     """Read .txt or .json file."""
-    with Path.open(file_path, "r") as f:
+    with Path.open(file_path, "r", encoding=file_encoding) as f:
         file_type = file_path.suffix.lower()
 
         if file_type == ".json":
@@ -31,14 +31,10 @@ def evaluate_metrics(gt_text: str, ocr_text: str) -> dict:
     return {"cer": cer_result, "wer": wer_result, "ned": ned_result}
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run and evaluate OCR performance metrics.")
-    parser.add_argument("-gt", "--ground_truth_file", type=str, required=True, help="[.txt] Path to ground truth file.")
-    parser.add_argument("-ocr", "--ocr_file", type=str, required=True, help="[.json/.txt] Path to OCR processed file.")
-    args = parser.parse_args()
-
-    gt_file_output = read_file(Path(args.ground_truth_file))
-    ocr_file_output = read_file(Path(args.ocr_file))
+def main(gt_path: Path, ocr_path: Path) -> dict:
+    """Run OCR evaluation given ground truth and OCR file paths."""
+    gt_file_output = read_file(gt_path)
+    ocr_file_output = read_file(ocr_path)
 
     if isinstance(ocr_file_output, str):
         result = evaluate_metrics(str(gt_file_output), str(ocr_file_output))
@@ -49,4 +45,14 @@ if __name__ == "__main__":
         msg = "OCR file is not .txt or .json."
         raise TypeError(msg)
 
-    print(f"OCR Evaluation results:\n{result}")  # noqa: T201
+    return result
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run and evaluate OCR performance metrics.")
+    parser.add_argument("-gt", "--ground_truth_file", type=str, required=True, help="[.txt] Path to ground truth file.")
+    parser.add_argument("-ocr", "--ocr_file", type=str, required=True, help="[.json/.txt] Path to OCR processed file.")
+    args = parser.parse_args()
+
+    results = main(Path(args.ground_truth_file), Path(args.ocr_file))
+    print(f"OCR Evaluation results:\n{results}")  # noqa: T201
