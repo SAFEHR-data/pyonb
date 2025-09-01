@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 dependencies = [
-    "kreuzberg[api]==3.11.0",
+    "kreuzberg[api]==3.11.1",
     "uvicorn",
 ]
 description = "pyonb wrapper around kreuzberg"
