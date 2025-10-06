@@ -8,7 +8,7 @@ def cer(gt: str, pred: str) -> float:
     Character Error Rate (CER): edit distance / length of ground truth.
 
     CER = 0 - Perfect character match
-    CER = >0 - percentage of character changes or insertions to match - can be >100% if insertion required
+    CER > 0 - ratio of character edits needed; values > 1.0 indicate more edits than original characters
     """
     if not gt:
         return float("inf") if pred else 0.0
@@ -20,12 +20,12 @@ def wer(gt: str, pred: str) -> float:
     Word Error Rate (WER): edit distance over tokenized words.
 
     WER = 0 - Perfect word match
-    WER = >0 - percentage of word changes or insertions to match - can be >100% if insertion required
+    WER > 0 - ratio of word edits needed; values > 1.0 indicate more edits than original words'
     """
     gt_words = gt.split()
     pred_words = pred.split()
 
-    # dynamic programming matrix
+    # Initialise dynamic programming matrix for edit distance calculation
     dp = [[0] * (len(pred_words) + 1) for _ in range(len(gt_words) + 1)]
 
     for i in range(len(gt_words) + 1):
