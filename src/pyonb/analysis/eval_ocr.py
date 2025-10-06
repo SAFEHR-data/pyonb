@@ -5,10 +5,10 @@ import json
 from ast import literal_eval
 from pathlib import Path
 
-from analysis.metrics import cer, ned, wer
+from pyonb.analysis.metrics import cer, ned, wer
 
 
-def read_file(file_path: Path, file_encoding: str = "cp1252") -> str | dict:
+def read_file(file_path: Path, file_encoding: str | None = None) -> str | dict:
     """Read .txt or .json file."""
     with Path.open(file_path, "r", encoding=file_encoding) as f:
         file_type = file_path.suffix.lower()
@@ -31,7 +31,7 @@ def evaluate_metrics(gt_text: str, ocr_text: str) -> dict:
     return {"cer": cer_result, "wer": wer_result, "ned": ned_result}
 
 
-def main(gt_path: Path, ocr_path: Path) -> dict:
+def run(gt_path: Path, ocr_path: Path) -> dict:
     """Run OCR evaluation given ground truth and OCR file paths."""
     gt_file_output = read_file(gt_path)
     ocr_file_output = read_file(ocr_path)
@@ -54,5 +54,5 @@ if __name__ == "__main__":
     parser.add_argument("-ocr", "--ocr_file", type=str, required=True, help="[.json/.txt] Path to OCR processed file.")
     args = parser.parse_args()
 
-    results = main(Path(args.ground_truth_file), Path(args.ocr_file))
+    results = run(Path(args.ground_truth_file), Path(args.ocr_file))
     print(f"OCR Evaluation results:\n{results}")  # noqa: T201

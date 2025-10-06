@@ -1,15 +1,12 @@
 """Script to evaluate OCR tool performance in subset of 20 clinical documents."""
-import os
-import sys
-from pathlib import Path
-import pandas as pd
+
 import json
+import os
+from pathlib import Path
 
-# Add analysis/ dir to Python path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+import pandas as pd
 
-from analysis.eval_ocr import main as run_eval_ocr
-
+from pyonb.analysis.eval_ocr import run as run_eval_ocr
 
 """
 Preprocessing
@@ -42,10 +39,10 @@ AIRFLOW_OCR_DIR = WORKING_DIR / Path("_airflow_ocr")
 csv_files = ["docling-results.csv", "marker-results.csv", "paddleocr-results.csv"]
 json_output_dirs = [DOCLING_JSON_OUTPUT_PATH, MARKER_JSON_OUTPUT_PATH, PADDLEOCR_JSON_OUTPUT_PATH]
 
-for csv_file, json_output_dir in zip(csv_files, json_output_dirs):
+for csv_file, json_output_dir in zip(csv_files, json_output_dirs, strict=False):
     df = pd.read_csv(AIRFLOW_OCR_DIR / Path(csv_file))
     # print(df.columns)
-    for doc_filename, doc_json_response in zip(df["name"], df["result"]):
+    for doc_filename, doc_json_response in zip(df["name"], df["result"], strict=False):
         print(f"Document filename: {doc_filename} \n {doc_json_response} \n")
         with open(json_output_dir / f"{doc_filename}.json", "w") as f:
             json.dump(doc_json_response, f)
@@ -59,7 +56,7 @@ gt_txt_filenames = sorted([p for p in Path(COPY_PASTE_TXT_PATH).iterdir()])
 ocr_json_filenames_nested_array = [
     sorted([p for p in Path(DOCLING_JSON_OUTPUT_PATH).iterdir()]),
     sorted([p for p in Path(MARKER_JSON_OUTPUT_PATH).iterdir()]),
-    sorted([p for p in Path(PADDLEOCR_JSON_OUTPUT_PATH).iterdir()])
+    sorted([p for p in Path(PADDLEOCR_JSON_OUTPUT_PATH).iterdir()]),
 ]
 # print(gt_txt_filenames, ocr_json_filenames)
 
@@ -68,17 +65,16 @@ ocr_tools = ["docling", "marker", "paddleocr"]
 print("OCR Evaluation results:")
 
 for ocr_json_filenames in ocr_json_filenames_nested_array:
-    
     ocr_eval_results = []
     current_ocr_tool = [tool for tool in ocr_tools if tool in str(ocr_json_filenames[0].parent)]
     print("\nEvaluating OCR tool: {current_ocr_tool} \n")
-    
-    for gt_txt_file, ocr_json_file in zip(gt_txt_filenames, ocr_json_filenames):
+
+    for gt_txt_file, ocr_json_file in zip(gt_txt_filenames, ocr_json_filenames, strict=False):
         try:
             ocr_metrics = run_eval_ocr(gt_txt_file, ocr_json_file)
             print(f"gt_txt: {gt_txt_file.name} / ocr_json: {ocr_json_file.name} - {ocr_metrics}")
 
-            ocr_metrics['gt_txt_filename'], ocr_metrics['ocr_json_filename'] = gt_txt_file.name, ocr_json_file.name
+            ocr_metrics["gt_txt_filename"], ocr_metrics["ocr_json_filename"] = gt_txt_file.name, ocr_json_file.name
             ocr_eval_results.append(ocr_metrics)
 
         except Exception as e:
@@ -86,9 +82,9 @@ for ocr_json_filenames in ocr_json_filenames_nested_array:
             continue  # skip to the next pair
 
     df_results = pd.DataFrame(ocr_eval_results)
-    df_results = df_results[["gt_txt_filename", "ocr_json_filename", "cer", "wer", "ned"]] # reorder
-    
+    df_results = df_results[["gt_txt_filename", "ocr_json_filename", "cer", "wer", "ned"]]  # reorder
+
     print(df_results)
-    
-    output_filename = WORKING_DIR / Path(f"ocr_eval_results_{str(current_ocr_tool[0])}.csv")
+
+    output_filename = WORKING_DIR / Path(f"ocr_eval_results_{current_ocr_tool[0]!s}.csv")
     df_results.to_csv(output_filename, index=False)

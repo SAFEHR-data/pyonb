@@ -68,14 +68,7 @@ services:
     networks:
       - pyonb_ocr_api
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-X",
-          "POST",
-          "http://localhost:${SPARROW_API_PORT}/sparrow-ocr",
-        ]
+      test: ["CMD", "curl", "-X", "GET", "http://localhost:${SPARROW_API_PORT}"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -107,7 +100,7 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
+          "GET",
           "http://localhost:${MARKER_API_PORT}/health",
         ]
       interval: 10s
@@ -175,7 +168,7 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
+          "GET",
           "http://localhost:${DOCLING_API_PORT}/health",
         ]
       interval: 10s
@@ -209,7 +202,7 @@ services:
           "CMD",
           "curl",
           "-X",
-          "POST",
+          "GET",
           "http://localhost:${OCR_FORWARDING_API_PORT}/",
         ]
       interval: 10s

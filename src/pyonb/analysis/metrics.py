@@ -24,7 +24,7 @@ def wer(gt: str, pred: str) -> float:
     """
     gt_words = gt.split()
     pred_words = pred.split()
-    
+
     # dynamic programming matrix
     dp = [[0] * (len(pred_words) + 1) for _ in range(len(gt_words) + 1)]
 
@@ -35,11 +35,11 @@ def wer(gt: str, pred: str) -> float:
 
     for i in range(1, len(gt_words) + 1):
         for j in range(1, len(pred_words) + 1):
-            cost = 0 if gt_words[i-1] == pred_words[j-1] else 1
+            cost = 0 if gt_words[i - 1] == pred_words[j - 1] else 1
             dp[i][j] = min(
-                dp[i-1][j] + 1,      # deletion
-                dp[i][j-1] + 1,      # insertion
-                dp[i-1][j-1] + cost  # substitution
+                dp[i - 1][j] + 1,  # deletion
+                dp[i][j - 1] + 1,  # insertion
+                dp[i - 1][j - 1] + cost,  # substitution
             )
 
     return round(dp[len(gt_words)][len(pred_words)] / max(1, len(gt_words)), 3)
