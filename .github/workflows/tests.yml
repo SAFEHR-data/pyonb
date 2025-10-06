@@ -35,6 +35,18 @@ jobs:
       - name: Cache docker/setup-buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Increase disk space available for building images
+        run: |
+          sudo rm -rf \
+            /usr/share/dotnet \
+            /usr/local/lib/android \
+            /usr/local/.ghcup \
+            /opt/ghc \
+            "$AGENT_TOOLSDIRECTORY" \
+            /usr/local/share/powershell \
+            /usr/share/swift \
+            /usr/lib/jvm || true
+
       - name: Disk Usage - initial size
         run: |
           echo "Disk usage summary:"
