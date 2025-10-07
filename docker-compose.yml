@@ -50,21 +50,21 @@ services:
   marker:
     profiles: [marker]
     build:
-      context: src/ocr/marker
+      context: packages/ocr/marker
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
         MARKER_API_PORT: ${MARKER_API_PORT}
     environment:
       <<: [*proxy-common, *common-env]
-      CONTAINER_DATA_FOLDER: /data
+      DATA_FOLDER: /data
       MARKER_API_PORT: ${MARKER_API_PORT}
     env_file:
       - ./.env
     ports:
       - "${MARKER_API_PORT}:${MARKER_API_PORT}"
     volumes:
-      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+      - ${PWD}/${DATA_FOLDER}:/data
     networks:
       - pyonb_ocr_api
     healthcheck:
