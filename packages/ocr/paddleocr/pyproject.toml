@@ -4,17 +4,13 @@ requires = ["hatchling"]
 
 [project]
 dependencies = [
-    "cmake",
-    "datasets==2.20.0",
-    "fastapi==0.111.0",
+    "fastapi",
     "paddleocr==2.10.0",
-    "pdf2image==1.17.0",
-    "pillow==11.1.0",
-    "python-multipart",
+    "pdf2image",
+    "pillow",
     "python-poppler",
     "requests",
-    "setuptools",
-    "uvicorn[standard]",
+    "uvicorn",
 ]
 description = "pyonb wrapper around paddleocr"
 name = "pyonb-paddleocr"
