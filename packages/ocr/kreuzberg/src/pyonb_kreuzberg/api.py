@@ -16,7 +16,7 @@ from kreuzberg._api.main import (
     health_check,
 )
 
-KREUZBERG_API_PORT = os.getenv("KREUZBERG_API_PORT")
+KREUZBERG_API_PORT = int(os.getenv("KREUZBERG_API_PORT", default="8116"))
 
 app = Litestar(
     route_handlers=[handle_files_upload, health_check, get_configuration],
