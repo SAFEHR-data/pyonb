@@ -7,6 +7,7 @@ from typing import Annotated
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse, RedirectResponse
+from pyonb_marker.main import convert_pdf_to_markdown
 
 logging.basicConfig(
     filename="marker." + datetime.datetime.now(tz=datetime.UTC).strftime("%Y%m%d") + ".log",
@@ -17,18 +18,6 @@ logging.basicConfig(
 # Creating an object
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
-# TODO(tom): improve imports - below try statements horrible
-try:
-    # local
-    from .main import run_marker
-except Exception:
-    logger.exception("Detected inside Docker container.")
-    # Docker container
-    try:
-        from main import run_marker  # type: ignore  # noqa: PGH003
-    except Exception:
-        logger.exception("Marker imports not possible.")
 
 app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
@@ -71,7 +60,7 @@ async def inference(file: Annotated[UploadFile, File()] = None) -> JSONResponse:
                 # marker requires path to file rather than UploadFile object, so create temp copy of file
                 with Path(f"temp_api_file_{file.filename}").open("wb") as f:  # noqa: ASYNC230
                     f.write(content)
-                result, _ = run_marker(f"temp_api_file_{file.filename}")
+                result = convert_pdf_to_markdown(f"temp_api_file_{file.filename}")
             except Exception as e:
                 raise HTTPException(status_code=400, detail=f"Failed to run marker. Error: {e}") from e
         else:
