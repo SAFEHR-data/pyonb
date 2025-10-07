@@ -18,9 +18,9 @@ END COMMENT OUT-->
 - a Python SDK for document extraction via the Hyland OnBase REST API (_work in progress_)
 - a suite of APIs wrapped around open-source Optical Character Recognition (OCR) tools, designed for local deployment, for converting PDFs to structured text including:
   - [Marker](https://github.com/VikParuchuri/marker)
-  - [Sparrow](https://github.com/katanaml/sparrow)
   - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
   - [Docling](https://github.com/docling-project/docling)
+  - [Kreuzberg](https://github.com/Goldziher/kreuzberg)
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ HOST_DATA_FOLDER="/absolute/path/to/documents/folder"
 ```sh
 OCR_FORWARDING_API_PORT=8110
 MARKER_API_PORT=8112
-SPARROW_API_PORT=8001
+PADDLEOCR_API_PORT=8114
 DOCLING_API_PORT=8115
 ```
 
@@ -119,7 +119,8 @@ docker compose --profile marker --profile docling up -d
 tox -e py312
 ```
 
-NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise. For example, with `--profile marker --profile docling` the Sparrow API will not be raised,
+NB: this may take a few minutes to perform the inference tests. Some may fail depending on which OCR tools you choose to raise.
+For example, with `--profile marker --profile docling` the Paddle and Kreuzberg APIs will not be raised,
 so the associated tests will fail.
 
 To run unit tests individually, adapt the following:
