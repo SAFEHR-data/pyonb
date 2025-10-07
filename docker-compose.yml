@@ -91,14 +91,14 @@ services:
         PADDLEOCR_API_PORT: ${PADDLEOCR_API_PORT}
     environment:
       <<: [*proxy-common, *common-env]
-      CONTAINER_DATA_FOLDER: /data
+      DATA_FOLDER: /data
       PADDLEOCR_API_PORT: ${PADDLEOCR_API_PORT}
     env_file:
       - ./.env
     ports:
       - "${PADDLEOCR_API_PORT}:${PADDLEOCR_API_PORT}"
     volumes:
-      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
+      - ${PWD}/${DATA_FOLDER}:/data
     networks:
       - pyonb_ocr_api
     healthcheck:
