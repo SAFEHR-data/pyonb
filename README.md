@@ -13,14 +13,13 @@
 
 END COMMENT OUT-->
 
-**pyonb** is two things:
+`pyonb` is a Python library and suite of APIs that wrap open-source Optical Character Recognition (OCR) tools. It it designed for local deployment and can convert PDFs to structured text using the several
+OCR tools:
 
-- a Python SDK for document extraction via the Hyland OnBase REST API (_work in progress_)
-- a suite of APIs wrapped around open-source Optical Character Recognition (OCR) tools, designed for local deployment, for converting PDFs to structured text including:
-  - [Marker](https://github.com/VikParuchuri/marker)
-  - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
-  - [Docling](https://github.com/docling-project/docling)
-  - [Kreuzberg](https://github.com/Goldziher/kreuzberg)
+- [Marker](https://github.com/VikParuchuri/marker)
+- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
+- [Docling](https://github.com/docling-project/docling)
+- [Kreuzberg](https://github.com/Goldziher/kreuzberg)
 
 ## Getting Started
 
@@ -30,16 +29,26 @@ END COMMENT OUT-->
 
 ### Installation & Usage
 
-1. Rename `.env.sample` to `.env`.
-
-2. Edit `.env` with the correct `HOST_DATA_FOLDER` location, e.g.:
+1. Clone `pyonb`
 
 ```sh
-HOST_DATA_FOLDER="/absolute/path/to/documents/folder"
-
-# e.g. for unit tests on GAE:
-# HOST_DATA_FOLDER="/gae/pyonb/tests/data/single_synthetic_doc"
+git clone git@github.com:SAFEHR-data/pyonb.git
+cd pyonb
 ```
+
+2. Rename `.env.sample` to `.env`.
+
+```sh
+mv .env.sample .env
+```
+
+3. Edit `.env` with the correct `DATA_FOLDER` location, e.g.:
+
+```sh
+DATA_FOLDER="path/to/documents/folder"
+```
+
+where the path is relative to the `docker-compose.yml` file in the top-level `pyonb` directory.
 
 4. Set OCR service ports, e.g.:
 
@@ -48,6 +57,7 @@ OCR_FORWARDING_API_PORT=8110
 MARKER_API_PORT=8112
 PADDLEOCR_API_PORT=8114
 DOCLING_API_PORT=8115
+KREUZBERG_API_PORT=8116
 ```
 
 > [!IMPORTANT]
@@ -60,7 +70,7 @@ DOCLING_API_PORT=8115
 > HTTP_PROXY=
 > ```
 
-5. Start the OCR API Server (e.g. using marker and docling):
+5. Start the OCR API Server (e.g. using `marker` and `docling`):
 
 ```sh
 docker compose --profile marker --profile docling up -d
