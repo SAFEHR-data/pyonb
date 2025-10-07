@@ -58,7 +58,7 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
 
     data = aiohttp.FormData()
     data.add_field(
-        "file",  # field name expected by Kreuzberg's /extract API
+        "file",
         file_upload.file,
         filename=file_upload.filename,
         content_type=file_upload.content_type,
