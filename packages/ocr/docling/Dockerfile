@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY ./pyproject.toml .
-COPY ./README .
+COPY ./README.md .
 COPY ./src src/
 
 RUN uv venv
