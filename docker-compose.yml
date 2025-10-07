@@ -23,7 +23,7 @@
 # Common
 x-http-proxy: &http-proxy ${HTTP_PROXY}
 x-https-proxy: &https-proxy ${HTTPS_PROXY}
-x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,sparrow,sparrow-ocr,marker,paddleocr,docling
+x-no-proxy: &no-proxy localhost,0.0.0.0,127.0.0.1,uclvlddpragae02,ocr-forwarding-api,marker,paddleocr,docling
 x-proxy-common: &proxy-common
   HTTP_PROXY: *http-proxy
   http_proxy: *http-proxy
@@ -47,33 +47,6 @@ networks:
 ################################################################################
 # Services
 services:
-  sparrow:
-    profiles: [sparrow]
-    build:
-      context: src/ocr/sparrow
-      dockerfile: Dockerfile
-      args:
-        <<: *build-args-common
-        SPARROW_API_PORT: ${SPARROW_API_PORT}
-    environment:
-      <<: [*proxy-common, *common-env]
-      CONTAINER_DATA_FOLDER: /data
-      SPARROW_API_PORT: ${SPARROW_API_PORT}
-    env_file:
-      - ./.env
-    ports:
-      - "${SPARROW_API_PORT}:${SPARROW_API_PORT}"
-    volumes:
-      - ${HOST_DATA_FOLDER}:${CONTAINER_DATA_FOLDER:-/data}
-    networks:
-      - pyonb_ocr_api
-    healthcheck:
-      test: ["CMD", "curl", "-X", "GET", "http://localhost:${SPARROW_API_PORT}"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 30s
-
   marker:
     profiles: [marker]
     build:
