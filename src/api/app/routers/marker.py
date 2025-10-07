@@ -1,15 +1,15 @@
 """Routers for Marker OCR."""
 
-import datetime
-import json
 import logging
 import os
+import time
 from pathlib import Path
 from typing import Annotated, Any
 
+import aiohttp
 import requests
 from dotenv import load_dotenv
-from fastapi import APIRouter, File, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 
 load_dotenv()
@@ -25,38 +25,24 @@ logger = logging.getLogger()
 router = APIRouter()
 
 
-def check_data_folder() -> Path | str:
-    """Check if Docker or local deployment and adjust DATA_FOLDER accordingly."""
-    # Detect if in Docker container
-    is_docker = Path("/.dockerenv").exists()
-
-    logger.info("HOST_DATA_FOLDER: %s", str(os.environ.get("HOST_DATA_FOLDER")))
-
-    if is_docker:
-        logger.info("Detected running inside Docker container.")
-        DATA_FOLDER = str(os.environ.get("CONTAINER_DATA_FOLDER"))
-    elif not is_docker:
-        logger.info("Detected running on host machine.")
-        DATA_FOLDER = str(os.environ.get("HOST_DATA_FOLDER"))
-
-    if Path(DATA_FOLDER).exists():
-        logger.info("DATA_FOLDER: %s", DATA_FOLDER)
-    else:
-        e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
-        logger.exception(NotADirectoryError(e))
-        raise NotADirectoryError(e)
-
-    return DATA_FOLDER
-
-
 @router.get("/marker/health")
 async def healthcheck() -> dict[str, Any]:
     """Test aliveness endpoint for Marker."""
     logger.info("[GET] /marker/health")
     url = f"http://marker:{MARKER_API_PORT}/health"
-    response = requests.get(url, timeout=5)  # noqa: ASYNC210
 
-    return json.loads(response.content.decode("utf-8"))
+    try:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
+            async with session.get(url) as response:
+                response.raise_for_status()
+    except aiohttp.ClientError:
+        logger.exception("Failed to connect to marker service")
+        raise
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"service": "marker", "status": "healthy"},
+    )
 
 
 @router.post("/marker/inference_single", status_code=status.HTTP_200_OK)
@@ -69,26 +55,34 @@ async def inference_single_doc(file_upload: Annotated[UploadFile, File()] = None
     logger.info("[POST] /marker/inference_single_doc")
     url = f"http://marker:{MARKER_API_PORT}/inference"
 
-    t1 = datetime.datetime.now(datetime.UTC)
-
-    file_bytes = await file_upload.read()
-    file = {"file": (file_upload.filename, file_bytes, file_upload.content_type)}
+    data = aiohttp.FormData()
+    data.add_field(
+        "file",
+        file_upload.file,
+        filename=file_upload.filename,
+        content_type=file_upload.content_type,
+    )
     headers = {"accept": "application/json"}
 
     logger.info("post request - url: %s", url)
-    logger.info("post request - file: %s", file)
+    logger.info("post request - file: %s", data)
     logger.info("post request - headers: %s", headers)
 
-    # nb: timeout currently arbitrarily one hour
-    response = requests.post(url=url, files=file, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
-
-    t2 = datetime.datetime.now(datetime.UTC)
-    td = t2 - t1
+    t1 = time.perf_counter()
+    try:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
+            async with session.post(url, data=data, headers=headers) as response:
+                response.raise_for_status()
+                ocr_result = await response.json()
+    except aiohttp.ClientError:
+        logger.exception("Request Exception")
+        raise
+    t2 = time.perf_counter()
 
     response_json = {
         "filename": str(file_upload.filename),
-        "duration_in_second": td.total_seconds(),
-        "ocr-result": response.json(),
+        "duration_in_second": t2 - t1,
+        "ocr-result": ocr_result,
     }
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
@@ -102,13 +96,18 @@ async def inference_folder() -> JSONResponse:
     # URL of marker service
     # TODO(tom): configure with env var (e.g. so can set 127.0.0.1 if running on host)
 
-    DATA_FOLDER = check_data_folder()
+    DATA_FOLDER = os.environ.get("DATA_FOLDER")
+    if DATA_FOLDER is None:
+        raise HTTPException(
+            status_code=500,
+            detail="DATA_FOLDER environment variable not defined.",
+        )
 
     filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)
 
     ocr_result = []
-    t1 = datetime.datetime.now(datetime.UTC)
+    t1 = time.perf_counter()
     for filename in filenames:
         abs_file_path = Path(DATA_FOLDER) / Path(filename)
         logger.info("abs_file_path: %s", abs_file_path)
@@ -119,7 +118,7 @@ async def inference_folder() -> JSONResponse:
 
         with Path.open(abs_file_path, "rb") as pdf_file:
             # Send the file via POST request
-            s1 = datetime.datetime.now(datetime.UTC)
+            s1 = time.perf_counter()
 
             files = {"file": (str(filename), pdf_file, "application/pdf")}
             headers = {"accept": "application/json"}
@@ -131,21 +130,19 @@ async def inference_folder() -> JSONResponse:
             # nb: timeout currently arbitrarily one hour
             response = requests.post(url, files=files, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
 
-            s2 = datetime.datetime.now(datetime.UTC)
-            td = s2 - s1
+            s2 = time.perf_counter()
             response_entry = {
                 "filename": filename,
-                "duration_in_second": td.total_seconds(),
+                "duration_in_second": s2 - s1,
                 "ocr-result": response.text,
             }
             logger.info("Filename: %s", filename)
             logger.info("response_entry: %s", response_entry)
             ocr_result.append(response_entry)
 
-    t2 = datetime.datetime.now(datetime.UTC)
-    total_duration = t2 - t1
+    t2 = time.perf_counter()
     response_json = {
-        "total_duration_in_second": total_duration.total_seconds(),
+        "total_duration_in_second": t2 - t1,
         "result": ocr_result,
     }
 
