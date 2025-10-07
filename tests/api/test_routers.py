@@ -112,7 +112,7 @@ def test_inference_single_file_upload_paddleocr(ocr_forwarding_api_port: str, si
 
 
 def test_inference_single_file_upload_kreuzberg(ocr_forwarding_api_port: str, single_pdf_filepath: Path) -> None:
-    """Test PDF conversion using marker with single file endpoint."""
+    """Test PDF conversion using kreuzberg with single file endpoint."""
     url = f"http://127.0.0.1:{ocr_forwarding_api_port}/kreuzberg-ocr/inference_single"
 
     single_pdf_filename = single_pdf_filepath.name

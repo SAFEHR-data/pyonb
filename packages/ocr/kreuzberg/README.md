@@ -49,4 +49,4 @@ curl -v -X POST http://127.0.0.1:8110/kreuzberg-ocr/inference_single \
   -H "accept: application/json"
 ```
 
-Note, this assumes you have set `OCR_FORWARD_API_PORT` to `8110`.
+Note, this assumes you have set `OCR_FORWARDING_API_PORT` to `8110`.
