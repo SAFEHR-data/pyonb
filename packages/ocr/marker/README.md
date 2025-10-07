@@ -13,7 +13,7 @@ Then, to convert a PDF to markdown:
 ```python
 import pyonb_marker
 
-result = pyonb_maker.convert_pdf_to_markdown(
+result = pyonb_marker.convert_pdf_to_markdown(
     filepath="path/to/data/input.pdf",
 )
 ```
