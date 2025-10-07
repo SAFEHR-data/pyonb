@@ -1,0 +1,16 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+dependencies = [
+    "docling",
+    "fastapi[standard]",
+    "python-dotenv",
+    "uvicorn",
+]
+description = "pyonb wrapper around docling"
+name = "pyonb-docling"
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.1.0"

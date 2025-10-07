@@ -1,4 +1,0 @@
-fastapi[standard]
-requests
-python-dotenv
-docling

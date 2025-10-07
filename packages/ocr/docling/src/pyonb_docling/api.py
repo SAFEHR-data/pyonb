@@ -8,6 +8,8 @@ from typing import Annotated
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse, RedirectResponse
 
+from pyonb_docling.main import convert_pdf_to_markdown
+
 logging.basicConfig(
     filename="docling." + datetime.datetime.now(tz=datetime.UTC).strftime("%Y%m%d") + ".log",
     format="%(asctime)s %(message)s",
@@ -17,18 +19,6 @@ logging.basicConfig(
 # Creating an object
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
-# TODO(tom): improve imports - below try statements horrible
-try:
-    # local
-    from .main import convert_pdf_to_markdown
-except Exception:
-    logger.exception("Detected inside Docker container.")
-    # Docker container
-    try:
-        from main import convert_pdf_to_markdown  # type: ignore  # noqa: PGH003
-    except Exception:
-        logger.exception("Docling imports not possible.")
 
 app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
