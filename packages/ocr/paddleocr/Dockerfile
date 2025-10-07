@@ -2,6 +2,22 @@ FROM ghcr.io/astral-sh/uv:python3.13-bookworm AS app
 
 SHELL ["/bin/bash", "-o", "pipefail", "-e", "-u", "-x", "-c"]
 
+
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ccache \
+       cmake \
+       curl \
+       ffmpeg \
+       libpoppler-cpp-dev \
+       libsm6 \
+       libxext6 \
+       pkg-config \
+       poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

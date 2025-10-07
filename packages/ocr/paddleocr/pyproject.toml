@@ -6,10 +6,13 @@ requires = ["hatchling"]
 dependencies = [
     "fastapi",
     "paddleocr==2.10.0",
+    "paddlepaddle",
     "pdf2image",
     "pillow",
+    "python-multipart",
     "python-poppler",
     "requests",
+    "setuptools",
     "uvicorn",
 ]
 description = "pyonb wrapper around paddleocr"

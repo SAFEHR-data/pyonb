@@ -6,10 +6,12 @@ import os
 from functools import lru_cache
 from typing import Annotated
 
+import numpy as np
 import uvicorn
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from paddleocr import PaddleOCR
+from pdf2image import convert_from_bytes
 from PIL import Image
 
 PADDLEOCR_API_PORT = int(os.getenv("PADDLE_API_PORT", default="8114"))
@@ -63,10 +65,10 @@ def load_ocr_model(
 
 
 def extract_text(pages: list[Image.Image], model: PaddleOCR) -> str:
-    """Perform OCR to extract text from the bytes of a PDF file."""
+    """Perform OCR to extract text from PDF pages using PaddleOCR."""
     all_text = ""
     for page in pages:
-        results = model.ocr(page, cls=True)
+        results = model.ocr(np.array(page), cls=True)
         if results and results[0]:
             page_text = "\n".join([line[1][0] for line in results[0]])
             all_text += page_text + "\n"
@@ -97,8 +99,9 @@ async def inference(
     )
     try:
         content = await file.read()
+        pages = convert_from_bytes(content, 300)
         result = extract_text(
-            pages=content,
+            pages=pages,
             model=model,
         )
         return JSONResponse(status_code=status.HTTP_200_OK, content=result)

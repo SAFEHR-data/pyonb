@@ -17,7 +17,7 @@ You can then use `curl` to send a PDF to the forwarding API:
 
 ```shell
 curl -v -X POST http://127.0.0.1:8110/paddleocr/inference_single \
-  -F "file=@document.pdf" \
+  -F "file_upload=@document.pdf" \
   -H "accept: application/json"
 ```
 
