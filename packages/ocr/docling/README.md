@@ -2,18 +2,29 @@
 
 ## Python
 
-NB: below MUST have absolute paths
+First install `pyonb_docling`. From the top-level `pyonb` directory:
 
 ```shell
-cd pyonb/ocr/docling
-python main.py ../tests/ms-note-one-page.pdf ../tests/output.txt
+uv sync --extra docling
+```
+
+Then, to convert a PDF to markdown:
+
+```python
+import pyonb_docling
+
+result = pyonb_docling.convert_pdf_to_markdown(
+    file_path="path/to/data/input.pdf",
+)
 ```
 
 ## Docker Compose
 
-NB: Set DATA_FOLDER in .env, e.g: DATA_FOLDER=path/to/folder/containing/PDF
+From the `pyonb/packages/ocr/docling` directory:
 
 ```shell
-cd pyonb/ocr/docling
-docker compose run docling data/ms-note-one-page.pdf data/output.txt
+docker compose run docling data/input.pdf data/output.md
 ```
+
+Note, you will need to set `DATA_FOLDER` in a `.env` file,
+e.g: `DATA_FOLDER=path/to/data/input.pdf`

@@ -6,13 +6,14 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-COPY ./pyproject.toml ./README.md .
+COPY ./pyproject.toml .
+COPY ./README .
 COPY ./src src/
 
 RUN uv venv
-RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked uv sync --no-editable --no-dev --compile-bytecode
+RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked uv sync --no-editable --no-dev
 
 # make uvicorn etc available
 ENV PATH="/app/.venv/bin:$PATH"
 
-CMD uvicorn pyonb_docling.api:app --host 0.0.0.0 --port "$DOCLING_API_PORT" --workers 4 --reload --use-colors
+CMD uvicorn pyonb_docling.api:app --host 0.0.0.0 --port "$DOCLING_API_PORT" --workers 4 --use-colors
