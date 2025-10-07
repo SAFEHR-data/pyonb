@@ -1,13 +1,19 @@
-FROM python:3.11.9-slim-bookworm
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm AS app
 
-ADD . .
-
-RUN apt-get update \
- && apt-get install -y vim curl
-
-RUN pip install -U pip
-RUN pip install -r requirements.txt
+SHELL ["/bin/bash", "-o", "pipefail", "-e", "-u", "-x", "-c"]
 
 WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-CMD fastapi run main.py --port $OCR_FORWARDING_API_PORT
+COPY ./pyproject.toml .
+COPY ./README.md .
+COPY ./src src/
+
+RUN uv venv
+RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked uv sync --no-editable --no-dev
+
+# make uvicorn etc available
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD uvicorn pyonb_api.main:app --host 0.0.0.0 --port "$OCR_FORWARDING_API_PORT" --workers 4 --use-colors
