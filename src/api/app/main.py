@@ -6,7 +6,7 @@ import logging
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from .routers import docling, kreuzberg, marker, paddleocr, sparrow
+from .routers import docling, kreuzberg, marker, paddleocr
 
 _today = datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d")  # type: ignore[attr-defined] # mypy complains that 'Module has no attribute "UTC"'
 logging.basicConfig(
@@ -20,7 +20,6 @@ logger.setLevel(logging.DEBUG)
 
 app = FastAPI(swagger_ui_parameters={"tryItOutEnabled": True})
 
-app.include_router(sparrow.router)
 app.include_router(marker.router)
 app.include_router(paddleocr.router)
 app.include_router(docling.router)
