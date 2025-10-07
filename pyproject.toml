@@ -53,6 +53,10 @@ optional-dependencies = {dev = [
     "mkdocstrings-python",
 ], kreuzberg = [
     "pyonb-kreuzberg",
+], marker = [
+    "pyonb-marker",
+], paddleocr = [
+    "pyonb-paddleocr",
 ], test = [
     "pytest",
     "pytest-cov",
@@ -157,6 +161,8 @@ gh.python."3.13" = ["py313"]
 [tool.uv.sources]
 pyonb-docling = {workspace = true}
 pyonb-kreuzberg = {workspace = true}
+pyonb-marker = {workspace = true}
+pyonb-paddleocr = {workspace = true}
 
 [tool.uv.workspace]
 members = [

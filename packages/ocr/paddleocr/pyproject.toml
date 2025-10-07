@@ -1,0 +1,22 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+dependencies = [
+    "fastapi",
+    "paddleocr==2.10.0",
+    "paddlepaddle",
+    "pdf2image",
+    "pillow",
+    "python-multipart",
+    "python-poppler",
+    "requests",
+    "setuptools",
+    "uvicorn",
+]
+description = "pyonb wrapper around paddleocr"
+name = "pyonb-paddleocr"
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.1.0"
