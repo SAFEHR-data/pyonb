@@ -1,6 +1,5 @@
 """Routers for Docling OCR."""
 
-import datetime
 import logging
 import os
 import time
@@ -30,20 +29,20 @@ router = APIRouter()
 @router.get("/docling/health")
 async def health() -> dict[str, Any]:
     """Test aliveness endpoint for Docling."""
-    logger.info("[GET] /kreuzberg/health")
-    url = f"http://kreuzberg:{DOCLING_API_PORT}/health"
+    logger.info("[GET] /docling/health")
+    url = f"http://docling:{DOCLING_API_PORT}/health"
 
     try:
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
             async with session.get(url) as response:
                 response.raise_for_status()
     except aiohttp.ClientError:
-        logger.exception("Failed to connect to kreuzberg service")
+        logger.exception("Failed to connect to docling service")
         raise
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"service": "kreuzberg", "status": "healthy"},
+        content={"service": "docling", "status": "healthy"},
     )
 
 
@@ -109,7 +108,7 @@ async def inference_folder() -> JSONResponse:
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)
 
     ocr_result = []
-    t1 = datetime.datetime.now(datetime.UTC)
+    t1 = time.perf_counter()
     for filename in filenames:
         abs_file_path = Path(DATA_FOLDER) / Path(filename)
         logger.info("abs_file_path: %s", abs_file_path)
@@ -120,7 +119,7 @@ async def inference_folder() -> JSONResponse:
 
         with Path.open(abs_file_path, "rb") as pdf_file:
             # Send the file via POST request
-            s1 = datetime.datetime.now(datetime.UTC)
+            s1 = time.perf_counter()
 
             files = {"file": (str(filename), pdf_file, "application/pdf")}
             headers = {"accept": "application/json"}
@@ -132,21 +131,19 @@ async def inference_folder() -> JSONResponse:
             # nb: timeout currently arbitrarily one hour
             response = requests.post(url, files=files, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
 
-            s2 = datetime.datetime.now(datetime.UTC)
-            td = s2 - s1
+            s2 = time.perf_counter()
             response_entry = {
                 "filename": filename,
-                "duration_in_second": td.total_seconds(),
+                "duration_in_second": s2 - s1,
                 "ocr-result": response.text,
             }
             logger.info("Filename: %s", filename)
             logger.info("response_entry: %s", response_entry)
             ocr_result.append(response_entry)
 
-    t2 = datetime.datetime.now(datetime.UTC)
-    total_duration = t2 - t1
+    t2 = time.perf_counter()
     response_json = {
-        "total_duration_in_second": total_duration.total_seconds(),
+        "total_duration_in_second": t2 - t1,
         "result": ocr_result,
     }
 
