@@ -7,10 +7,12 @@ from typing import Annotated
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse, RedirectResponse
+
 from pyonb_marker.main import convert_pdf_to_markdown
 
+_today = datetime.datetime.now(datetime.UTC).strftime("%Y_%m_%d")  # type: ignore[attr-defined] # mypy complains that 'Module has no attribute "UTC"'
 logging.basicConfig(
-    filename="marker." + datetime.datetime.now(tz=datetime.UTC).strftime("%Y%m%d") + ".log",
+    filename=f"marker-{_today}.log",
     format="%(asctime)s %(message)s",
     filemode="a",
 )
