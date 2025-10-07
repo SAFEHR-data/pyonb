@@ -84,7 +84,7 @@ services:
   paddleocr:
     profiles: [paddleocr]
     build:
-      context: src/ocr/paddleocr
+      context: packages/ocr/paddleocr
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
