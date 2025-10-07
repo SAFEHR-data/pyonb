@@ -2,18 +2,29 @@
 
 ## Python
 
-NB: below MUST have absolute paths
+First install `pyonb_marker`. From the top-level `pyonb` directory:
 
 ```shell
-cd pyonb/ocr/marker
-python main.py ../tests/ms-note-one-page.pdf ../tests/output.txt
+uv sync --extra marker
 ```
 
-## Docker Compose
+Then, to convert a PDF to markdown:
 
-NB: Set DATA_FOLDER in .env, e.g: DATA_FOLDER=path/to/folder/containing/PDF
+```python
+import pyonb_marker
+
+result = pyonb_maker.convert_pdf_to_markdown(
+    filepath="path/to/data/input.pdf",
+)
+```
+
+## Docker compose
+
+From the `pyonb/packages/ocr/marker` directory:
 
 ```shell
-cd pyonb/ocr/marker
-docker compose run marker data/ms-note-one-page.pdf data/output.txt
+docker compose run marker data/ms-note-one-page.pdf data/output.md
 ```
+
+Note, you will need to set `DATA_FOLDER` in a `.env` file,
+e.g.: `DATA_FOLDER=path/to/data/input.pdf`.
