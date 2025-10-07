@@ -1,12 +1,12 @@
 """Routers for Paddle OCR."""
 
-import json
 import logging
 import os
-from datetime import UTC, datetime
+import time
 from pathlib import Path
 from typing import Annotated, Any
 
+import aiohttp
 import requests
 from dotenv import load_dotenv
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
@@ -23,28 +23,27 @@ else:
 # Creating an object
 logger = logging.getLogger()
 
-# Detect if in Docker container
-is_docker = Path("/.dockerenv").exists()
-
 router = APIRouter()
 
 
 @router.get("/paddleocr/health")
 async def health_check() -> dict[str, Any]:
-    """
-    Health check endpoint to verify API is accessible.
-
-    Returns 200 OK status if API is running properly.
-    """
+    """Test aliveness endpoint for Docling."""
     logger.info("[GET] /paddleocr/health")
     url = f"http://paddleocr:{PADDLEOCR_API_PORT}/health"
 
     try:
-        response = requests.get(url, timeout=5)  # noqa: ASYNC210
-        return json.loads(response.content.decode("utf-8"))
-    except Exception as e:
-        logger.exception("Connection exception when calling paddleocr")
-        raise HTTPException(status_code=500, detail=repr(e)) from e
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
+            async with session.get(url) as response:
+                response.raise_for_status()
+    except aiohttp.ClientError:
+        logger.exception("Failed to connect to paddleocr service")
+        raise
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"service": "paddleocr", "status": "healthy"},
+    )
 
 
 @router.post("/paddleocr/inference_single", status_code=status.HTTP_200_OK)
@@ -61,25 +60,38 @@ async def inference_single_doc(
     logger.info("[POST] /paddleocr/inference_single_doc")
     url = f"http://paddleocr:{PADDLEOCR_API_PORT}/inference"
 
-    t1 = datetime.now(tz=UTC)
-
-    file_bytes = await file_upload.read()
-    file = {"file": (file_upload.filename, file_bytes, file_upload.content_type)}
+    data = aiohttp.FormData()
+    data.add_field(
+        "file",
+        file_upload.file,
+        filename=file_upload.filename,
+        content_type=file_upload.content_type,
+    )
+    if ocr_model_version:
+        data.add_field("ocr_version", ocr_model_version)
+    if ocr_model_lang:
+        data.add_field("lang", ocr_model_lang)
+    headers = {"accept": "application/json"}
 
     logger.info("post request - url: %s", url)
-    logger.info("post request - file: %s", file)
+    logger.info("post request - file: %s", data)
+    logger.info("post request - headers: %s", headers)
 
-    # nb: timeout currently arbitrarily one hour
-    data = {"model_version": ocr_model_version, "model_lang": ocr_model_lang}
-    response = requests.post(url=url, files=file, data=data, timeout=60 * 60)  # noqa: ASYNC210
-
-    t2 = datetime.now(tz=UTC)
-    td = t2 - t1
+    t1 = time.perf_counter()
+    try:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60 * 60)) as session:  # noqa: SIM117
+            async with session.post(url, data=data, headers=headers) as response:
+                response.raise_for_status()
+                ocr_result = await response.json()
+    except aiohttp.ClientError:
+        logger.exception("Request Exception")
+        raise
+    t2 = time.perf_counter()
 
     response_json = {
         "filename": str(file_upload.filename),
-        "duration_in_second": td.total_seconds(),
-        "ocr-result": response.json(),
+        "duration_in_second": t2 - t1,
+        "ocr-result": ocr_result,
     }
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
@@ -88,30 +100,23 @@ async def inference_single_doc(
 @router.post("/paddleocr/inference_folder")
 async def inference_folder(model_version: str | None = None, model_lang: str | None = None) -> dict[str, Any]:
     """Runs PaddleOCR inference on multiple documents in a folder."""
-    logger.info("[POST] /paddleocr/inference")
+    logger.info("[POST] /paddleocr/inference_folder")
     logger.debug("model_version : %s", str(model_version))
     logger.debug("model_lang : %s", str(model_lang))
     url = f"http://paddleocr:{PADDLEOCR_API_PORT}/inference"
 
-    if is_docker:
-        logger.info("Detected running inside Docker container.")
-        DATA_FOLDER = str(os.environ.get("CONTAINER_DATA_FOLDER"))
-    elif not is_docker:
-        logger.info("Detected running on host machine.")
-        DATA_FOLDER = str(os.environ.get("HOST_DATA_FOLDER"))
-
-    if Path(DATA_FOLDER).exists():
-        logger.info("DATA_FOLDER: %s", DATA_FOLDER)
-    else:
-        e = f"{Path(DATA_FOLDER)!s} not found or does not exist."
-        logger.exception(NotADirectoryError(e))
-        raise NotADirectoryError(e)
+    DATA_FOLDER = os.environ.get("DATA_FOLDER")
+    if DATA_FOLDER is None:
+        raise HTTPException(
+            status_code=500,
+            detail="DATA_FOLDER environment variable not defined.",
+        )
 
     filenames = [str(f.name) for f in Path(DATA_FOLDER).iterdir() if f.suffix == ".pdf"]
     logger.info("Filenames in %s: %s", DATA_FOLDER, filenames)
 
     ocr_result = []
-    t1 = datetime.now(tz=UTC)
+    t1 = time.perf_counter()
     for filename in filenames:
         abs_file_path = Path(DATA_FOLDER) / Path(filename)
         logger.info("abs_file_path: %s", abs_file_path)
@@ -122,22 +127,33 @@ async def inference_folder(model_version: str | None = None, model_lang: str | N
 
         with Path.open(abs_file_path, "rb") as pdf_file:
             # Send the file via POST request
-            s1 = datetime.now(tz=UTC)
+            s1 = time.perf_counter()
+
             files = {"file": (str(filename), pdf_file, "application/pdf")}
             data = {"model_version": model_version, "model_lang": model_lang}
-            response = requests.post(url, files=files, data=data, timeout=60 * 60)  # noqa: ASYNC210
+            headers = {"accept": "application/json"}
 
-            s2 = datetime.now(tz=UTC)
-            td = s2 - s1
+            logger.info("post request - url: %s", url)
+            logger.info("post request - files: %s", files)
+            logger.info("post request - headers: %s", headers)
+
+            # nb: timeout currently arbitrarily one hour
+            response = requests.post(url, files=files, data=data, headers=headers, timeout=60 * 60)  # noqa: ASYNC210
+
+            s2 = time.perf_counter()
             response_entry = {
                 "filename": filename,
-                "duration_in_second": td.total_seconds(),
-                "ocr-result": json.loads(response.content.decode("utf-8")),
+                "duration_in_second": s2 - s1,
+                "ocr-result": response.text,
             }
             logger.info("Filename: %s", filename)
             logger.info("response_entry: %s", response_entry)
             ocr_result.append(response_entry)
-    t2 = datetime.now(tz=UTC)
-    total_duration = t2 - t1
 
-    return {"total_duration_in_second": total_duration.total_seconds(), "result": ocr_result}
+    t2 = time.perf_counter()
+    response_json = {
+        "total_duration_in_second": t2 - t1,
+        "result": ocr_result,
+    }
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content=response_json)
