@@ -34,7 +34,9 @@ dynamic = [
 keywords = [
 ]
 name = "pyonb"
-optional-dependencies = {dev = [
+optional-dependencies = {api = [
+    "pyonb-api",
+], dev = [
     "build",
     "marker-pdf[full]==1.6.2",
     "mypy",
@@ -159,6 +161,7 @@ gh.python."3.12" = ["py312"]
 gh.python."3.13" = ["py313"]
 
 [tool.uv.sources]
+pyonb-api = {workspace = true}
 pyonb-docling = {workspace = true}
 pyonb-kreuzberg = {workspace = true}
 pyonb-marker = {workspace = true}
@@ -166,5 +169,6 @@ pyonb-paddleocr = {workspace = true}
 
 [tool.uv.workspace]
 members = [
+    "packages/api",
     "packages/ocr/*",
 ]

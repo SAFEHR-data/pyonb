@@ -185,7 +185,7 @@ services:
 
   ocr-forwarding-api:
     build:
-      context: src/api
+      context: packages/api
       dockerfile: Dockerfile
       args:
         <<: *build-args-common
@@ -199,7 +199,6 @@ services:
     ports:
       - "${OCR_FORWARDING_API_PORT}:${OCR_FORWARDING_API_PORT}"
     volumes:
-      - ./src/api/app:/app
       - ${PWD}/${DATA_FOLDER}:/data
     networks:
       - pyonb_ocr_api

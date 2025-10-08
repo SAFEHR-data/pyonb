@@ -1,0 +1,16 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+dependencies = [
+    "aiohttp",
+    "fastapi[standard]",
+    "requests",
+    "uvicorn",
+]
+description = "pyonb forwarding API"
+name = "pyonb-api"
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.1.0"

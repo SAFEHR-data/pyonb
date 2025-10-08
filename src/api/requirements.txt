@@ -1,4 +1,0 @@
-fastapi[standard]
-uvicorn
-requests
-aiohttp
